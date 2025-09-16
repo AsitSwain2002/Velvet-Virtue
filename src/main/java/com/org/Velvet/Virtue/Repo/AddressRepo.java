@@ -1,0 +1,11 @@
+package com.org.Velvet.Virtue.Repo;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+import com.org.Velvet.Virtue.Model.Address;
+
+@Repository
+public interface AddressRepo extends JpaRepository<Address, Integer> {
+
+}
