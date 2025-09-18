@@ -1,7 +1,10 @@
 package com.org.Velvet.Virtue.Model;
 
+import java.util.List;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -22,12 +25,14 @@ public class Users {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
 	private String firstName;
-	private String lastame;
+	private String lastName;
 	private String mobile;
 	private String email;
 	private String password;
 	private String age;
-	@OneToMany(mappedBy = "user",cascade = CascadeType.ALL)
-	private Address address;
+	@OneToMany(mappedBy = "users", cascade = CascadeType.ALL)
+	private List<Address> address;
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	private List<Roles> roles;
 
 }
