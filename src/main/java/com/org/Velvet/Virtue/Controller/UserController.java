@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.org.Velvet.Virtue.Dto.UsersDto;
+import com.org.Velvet.Virtue.Util.ResponseBuilder;
 import com.org.Velvet.Virtue.service.UsersService;
 
 @RestController
@@ -21,8 +22,8 @@ public class UserController {
 	public ResponseEntity<?> saveUser(@RequestBody UsersDto usersDto) {
 		boolean saveUser = userService.saveUser(usersDto);
 		if (saveUser) {
-			return new ResponseEntity("Saved Successfully", HttpStatus.OK);
+			return ResponseBuilder.withOutData("Saved Successfully", HttpStatus.OK);
 		}
-		return new ResponseEntity("Internal Server Error", HttpStatus.INTERNAL_SERVER_ERROR);
+		return ResponseBuilder.withOutData("Internal Server Error", HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 }
