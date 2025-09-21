@@ -1,6 +1,7 @@
 package com.org.Velvet.Virtue.service.impl;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,6 +62,26 @@ public class UsersServiceImpl implements UsersService {
 
 	private void setAddress(Users user) {
 		user.getAddress().forEach(e -> e.setUsers(user));
+	}
+
+	@Override
+	public UsersDto findById(Integer id) {
+		Users user = usersRepo.findById(id).orElseThrow(() -> new ResourceNotFoundException("User Not Found"));
+		return mapper.map(user, UsersDto.class);
+	}
+
+	@Override
+	public List<UsersDto> findAll() {
+		List<Users> users = usersRepo.findAll();
+		return users.stream().map(e -> mapper.map(e, UsersDto.class)).collect(Collectors.toList());
+	}
+
+	@Override
+	public void deleteUser(Integer id) {
+		Users user = usersRepo.findById(id).orElseThrow(() -> new ResourceNotFoundException("User Not Found"));
+		user.setDeleted(true);
+		usersRepo.save(user);
+
 	}
 
 }

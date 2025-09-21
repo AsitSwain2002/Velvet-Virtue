@@ -34,5 +34,6 @@ public class Users {
 	private List<Address> address;
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	private List<Roles> roles;
+	private boolean isDeleted;
 
 }
