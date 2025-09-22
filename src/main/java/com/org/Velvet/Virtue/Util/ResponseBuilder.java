@@ -9,4 +9,9 @@ public class ResponseBuilder {
 		GenericResponse gr = GenericResponse.builder().msg(msg).status(statusCode.value()).build();
 		return gr.createWithOutData();
 	}
+
+	public static ResponseEntity<?> withData(String msg, Object data, HttpStatusCode statusCode) {
+		GenericResponse gr = GenericResponse.builder().msg(msg).data(data).status(statusCode.value()).build();
+		return gr.createWithData();
+	}
 }
