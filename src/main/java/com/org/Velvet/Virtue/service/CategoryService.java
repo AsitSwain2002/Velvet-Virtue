@@ -15,4 +15,6 @@ public interface CategoryService {
 	boolean removeRecycleBin(int category_id);
 
 	List<CategoryDto> getAllCategory();
+	
+	CategoryDto findById(int id);
 }
