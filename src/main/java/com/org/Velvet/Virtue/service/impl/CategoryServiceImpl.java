@@ -87,4 +87,11 @@ public class CategoryServiceImpl implements CategoryService {
 		return findAll.stream().map(e -> mapper.map(e, CategoryDto.class)).collect(Collectors.toList());
 	}
 
+	@Override
+	public CategoryDto findById(int id) {
+		Category dbCategory = categoryRepo.findById(id)
+				.orElseThrow(() -> new ResourceNotFoundException("Category Not Found"));
+		return mapper.map(dbCategory, CategoryDto.class);
+	}
+
 }
