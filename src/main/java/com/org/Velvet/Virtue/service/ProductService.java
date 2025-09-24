@@ -10,4 +10,6 @@ import com.org.Velvet.Virtue.Dto.ProductsDto;
 public interface ProductService {
 
 	boolean saveProduct(String productDto, List<MultipartFile> file) throws IOException;
+	void deleteProduct(int id);
+	List<ProductsDto> allProduct();
 }

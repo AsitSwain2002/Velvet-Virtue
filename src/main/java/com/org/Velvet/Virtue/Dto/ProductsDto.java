@@ -16,5 +16,6 @@ public class ProductsDto {
 	private double price;
 	private int discount;
 	private Category category;
+	private String type;
 	private List<FileDetailsDto> fileDetails;
 }

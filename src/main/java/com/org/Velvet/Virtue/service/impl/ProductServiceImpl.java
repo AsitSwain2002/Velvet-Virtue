@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.apache.commons.io.FilenameUtils;
 import org.modelmapper.ModelMapper;
@@ -184,6 +185,22 @@ public class ProductServiceImpl implements ProductService {
 		double discountPrice = price * ((double) discount / 100);
 
 		products.setPriceAfterDiscount(price - discountPrice);
+	}
+
+	@Override
+	public void deleteProduct(int id) {
+
+		Products dbProducts = productRepo.findById(id)
+				.orElseThrow(() -> new ResourceNotFoundException("Product Not found"));
+		dbProducts.setDeleted(true);
+		productRepo.save(dbProducts);
+
+	}
+
+	@Override
+	public List<ProductsDto> allProduct() {
+		List<Products> products = productRepo.findAllByDeletedFalse();
+		return products.stream().map(e -> mapper.map(e, ProductsDto.class)).collect(Collectors.toList());
 	}
 
 }
