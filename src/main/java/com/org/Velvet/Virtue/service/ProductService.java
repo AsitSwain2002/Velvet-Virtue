@@ -1,0 +1,13 @@
+package com.org.Velvet.Virtue.service;
+
+import java.io.IOException;
+import java.util.List;
+
+import org.springframework.web.multipart.MultipartFile;
+
+import com.org.Velvet.Virtue.Dto.ProductsDto;
+
+public interface ProductService {
+
+	boolean saveProduct(String productDto, List<MultipartFile> file) throws IOException;
+}
