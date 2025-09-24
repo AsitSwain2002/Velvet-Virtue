@@ -10,6 +10,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -33,10 +34,13 @@ public class Products extends SuperClass {
 	private double price;
 	private int discount;
 	private double priceAfterDiscount;
+	private String type;
 	@ManyToOne
 	@JoinColumn
 	private Category category;
 	@OneToMany(mappedBy = "products", cascade = CascadeType.ALL)
 	private List<FileDetails> fileDetails;
+	@OneToOne
+	private ProductType productType;
 
 }
