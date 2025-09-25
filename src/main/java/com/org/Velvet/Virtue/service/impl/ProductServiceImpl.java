@@ -26,9 +26,11 @@ import com.org.Velvet.Virtue.Dto.ProductsDto;
 import com.org.Velvet.Virtue.ExceptionHandler.ResourceNotFoundException;
 import com.org.Velvet.Virtue.Model.Category;
 import com.org.Velvet.Virtue.Model.FileDetails;
+import com.org.Velvet.Virtue.Model.ProductType;
 import com.org.Velvet.Virtue.Model.Products;
 import com.org.Velvet.Virtue.Repo.FileRepo;
 import com.org.Velvet.Virtue.Repo.ProductRepo;
+import com.org.Velvet.Virtue.Repo.ProductTypeRepo;
 import com.org.Velvet.Virtue.service.CategoryService;
 import com.org.Velvet.Virtue.service.ProductService;
 
@@ -46,6 +48,9 @@ public class ProductServiceImpl implements ProductService {
 
 	@Autowired
 	private FileRepo fileRepo;
+
+	@Autowired
+	private ProductTypeRepo productTypeRepo;
 
 	@Value("${file.upload.path}")
 	private String folderName;
@@ -69,6 +74,9 @@ public class ProductServiceImpl implements ProductService {
 			// set discount here
 			setDiscount(products);
 
+			// set Type
+			setType(products);
+
 			// set file
 			List<FileDetails> saveFile = saveFile(products, file);
 			if (!CollectionUtils.isEmpty(saveFile)) {
@@ -87,6 +95,12 @@ public class ProductServiceImpl implements ProductService {
 			return false;
 		}
 
+	}
+
+	private void setType(Products products) {
+		ProductType orElseThrow = productTypeRepo.findById(products.getProductType().getId())
+				.orElseThrow(() -> new ResourceNotFoundException("Product Type Not Found"));
+		products.setProductType(orElseThrow);
 	}
 
 	private List<FileDetails> saveFile(Products products, List<MultipartFile> files) throws IOException {
