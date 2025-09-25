@@ -54,7 +54,6 @@ public class ProductsController {
 		}
 	}
 
-
 	@GetMapping("/search-product/{name}")
 	public ResponseEntity<?> searchProduct(@PathVariable String name) {
 		List<ProductsDto> allProduct = productService.searchProduct(name);
@@ -65,10 +64,11 @@ public class ProductsController {
 		}
 	}
 
-	public ResponseEntity<?> allProduct(@RequestBody ProductTypeDto dto) {
-		boolean saveType = productTypeService.saveType(dto);
-		if (saveType) {
-			return ResponseBuilder.withOutData("Saved Successfully", HttpStatus.OK);
+	@GetMapping("/all-product")
+	public ResponseEntity<?> allProduct() {
+		List<ProductsDto> allProduct = productService.allProduct();
+		if (!ObjectUtils.isEmpty(allProduct)) {
+			return ResponseBuilder.withData("Fetched Successfully", allProduct, HttpStatus.OK);
 		} else {
 			return ResponseBuilder.withOutData("Internal Server Error", HttpStatus.INTERNAL_SERVER_ERROR);
 		}
