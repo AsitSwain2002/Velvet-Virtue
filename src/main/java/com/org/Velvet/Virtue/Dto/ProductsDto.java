@@ -3,6 +3,8 @@ package com.org.Velvet.Virtue.Dto;
 import java.util.List;
 
 import com.org.Velvet.Virtue.Model.Category;
+import com.org.Velvet.Virtue.Model.ProductType;
+
 import lombok.Data;
 
 @Data
@@ -18,4 +20,5 @@ public class ProductsDto {
 	private Category category;
 	private String type;
 	private List<FileDetailsDto> fileDetails;
+	private ProductTypeDto productType;
 }
