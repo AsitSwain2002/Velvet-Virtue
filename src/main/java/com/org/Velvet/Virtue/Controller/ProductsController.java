@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -53,15 +54,6 @@ public class ProductsController {
 		}
 	}
 
-	@GetMapping("/all-product")
-	public ResponseEntity<?> allProduct() {
-		List<ProductsDto> allProduct = productService.allProduct();
-		if (!ObjectUtils.isEmpty(allProduct)) {
-			return ResponseBuilder.withData("fetched", allProduct, HttpStatus.OK);
-		} else {
-			return ResponseBuilder.withOutData("No Product Found", HttpStatus.NOT_FOUND);
-		}
-	}
 
 	@GetMapping("/search-product/{name}")
 	public ResponseEntity<?> searchProduct(@PathVariable String name) {
@@ -70,6 +62,15 @@ public class ProductsController {
 			return ResponseBuilder.withData("fetched", allProduct, HttpStatus.OK);
 		} else {
 			return ResponseBuilder.withOutData("No Product Found", HttpStatus.NOT_FOUND);
+		}
+	}
+
+	public ResponseEntity<?> allProduct(@RequestBody ProductTypeDto dto) {
+		boolean saveType = productTypeService.saveType(dto);
+		if (saveType) {
+			return ResponseBuilder.withOutData("Saved Successfully", HttpStatus.OK);
+		} else {
+			return ResponseBuilder.withOutData("Internal Server Error", HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 
