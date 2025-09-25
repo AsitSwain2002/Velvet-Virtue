@@ -170,8 +170,7 @@ public class ProductServiceImpl implements ProductService {
 		if (products.getPrice() != 0) {
 			dbProducts.setPrice(products.getPrice());
 		}
-
-		if (products.getQuantity() != 0) {
+		if (products.getQuantity() != null) {
 			dbProducts.setQuantity(products.getQuantity());
 		}
 
@@ -213,7 +212,13 @@ public class ProductServiceImpl implements ProductService {
 
 	@Override
 	public List<ProductsDto> allProduct() {
-		List<Products> products = productRepo.findAllByDeletedFalse();
+		List<Products> products = productRepo.findAllByDeletedFalseAndActiveTrue();
+		return products.stream().map(e -> mapper.map(e, ProductsDto.class)).collect(Collectors.toList());
+	}
+
+	@Override
+	public List<ProductsDto> searchProduct(String name) {
+		List<Products> products = productRepo.findByNameContaining(name);
 		return products.stream().map(e -> mapper.map(e, ProductsDto.class)).collect(Collectors.toList());
 	}
 

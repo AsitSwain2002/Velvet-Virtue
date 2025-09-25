@@ -10,6 +10,8 @@ import com.org.Velvet.Virtue.Model.Products;
 @Repository
 public interface ProductRepo extends JpaRepository<Products, Integer> {
 
-	List<Products> findAllByDeletedFalse();
+	List<Products> findAllByDeletedFalseAndActiveTrue();
+
+	List<Products> findByNameContaining(String name);
 
 }
