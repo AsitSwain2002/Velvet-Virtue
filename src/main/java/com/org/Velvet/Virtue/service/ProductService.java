@@ -14,5 +14,6 @@ public interface ProductService {
 	void deleteProduct(int id);
 
 	List<ProductsDto> allProduct();
-
+    
+	List<ProductsDto> searchProduct(String name);
 }

@@ -35,7 +35,6 @@ public class Products extends SuperClass {
 	private double price;
 	private int discount;
 	private double priceAfterDiscount;
-	private String type;
 	@ManyToOne
 	@JoinColumn
 	private Category category;
