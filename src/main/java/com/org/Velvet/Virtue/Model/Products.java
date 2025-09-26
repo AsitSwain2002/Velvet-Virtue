@@ -42,5 +42,7 @@ public class Products extends SuperClass {
 	private List<FileDetails> fileDetails;
 	@OneToOne
 	private ProductType productType;
+	@OneToMany(mappedBy = "products", cascade = CascadeType.ALL)
+	private List<LikedProduct> likedProducts;
 
 }

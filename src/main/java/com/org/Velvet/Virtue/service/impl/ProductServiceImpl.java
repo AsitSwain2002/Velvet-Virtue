@@ -26,11 +26,15 @@ import com.org.Velvet.Virtue.Dto.ProductsDto;
 import com.org.Velvet.Virtue.ExceptionHandler.ResourceNotFoundException;
 import com.org.Velvet.Virtue.Model.Category;
 import com.org.Velvet.Virtue.Model.FileDetails;
+import com.org.Velvet.Virtue.Model.LikedProduct;
 import com.org.Velvet.Virtue.Model.ProductType;
 import com.org.Velvet.Virtue.Model.Products;
+import com.org.Velvet.Virtue.Model.Users;
 import com.org.Velvet.Virtue.Repo.FileRepo;
+import com.org.Velvet.Virtue.Repo.LikedProductRepo;
 import com.org.Velvet.Virtue.Repo.ProductRepo;
 import com.org.Velvet.Virtue.Repo.ProductTypeRepo;
+import com.org.Velvet.Virtue.Repo.UsersRepo;
 import com.org.Velvet.Virtue.service.CategoryService;
 import com.org.Velvet.Virtue.service.ProductService;
 
@@ -47,10 +51,13 @@ public class ProductServiceImpl implements ProductService {
 	private CategoryService categoryService;
 
 	@Autowired
-	private FileRepo fileRepo;
+	private LikedProductRepo likedProductRepo;
 
 	@Autowired
 	private ProductTypeRepo productTypeRepo;
+
+	@Autowired
+	private UsersRepo usersRepo;
 
 	@Value("${file.upload.path}")
 	private String folderName;
@@ -219,6 +226,55 @@ public class ProductServiceImpl implements ProductService {
 	@Override
 	public List<ProductsDto> searchProduct(String name) {
 		List<Products> products = productRepo.findByNameContaining(name);
+		return products.stream().map(e -> mapper.map(e, ProductsDto.class)).collect(Collectors.toList());
+	}
+
+	// liked product logic
+	@Override
+	public boolean likeProduct(int id) {
+		int userId = 1;
+		Products dbProducts = productRepo.findById(id)
+				.orElseThrow(() -> new ResourceNotFoundException("Product Not found"));
+		Users users = usersRepo.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User not found"));
+		// 3. Check if already liked (avoid duplicates)
+		List<LikedProduct> existingLike = likedProductRepo.findAllByUsersAndProducts(users, dbProducts);
+
+		if (!ObjectUtils.isEmpty(existingLike)) {
+			return false;
+		}
+		// 4. Save new like
+		LikedProduct newLike = LikedProduct.builder().users(users).products(dbProducts).build();
+
+		LikedProduct save = likedProductRepo.save(newLike);
+		if (!ObjectUtils.isEmpty(save)) {
+			return true;
+		}
+		return false;
+	}
+
+	@Override
+	public boolean dislikeProduct(int id) {
+		int userId = 1;
+		Products dbProducts = productRepo.findById(id)
+				.orElseThrow(() -> new ResourceNotFoundException("Product Not found"));
+
+		Users users = usersRepo.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+		LikedProduct likedProduct = likedProductRepo.findByUsersAndProducts(users, dbProducts);
+		if (ObjectUtils.isEmpty(likedProduct)) {
+			return false;
+		}
+
+		likedProductRepo.delete(likedProduct);
+		return true;
+	}
+
+	@Override
+	public List<ProductsDto> allLikedProduct(int userId) {
+		Users users = usersRepo.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User not found"));
+		List<LikedProduct> likedProducts = likedProductRepo.findAllByUsers(users);
+		// find product from likedProduct
+		List<Products> products = likedProducts.stream().map(e -> e.getProducts()).collect(Collectors.toList());
 		return products.stream().map(e -> mapper.map(e, ProductsDto.class)).collect(Collectors.toList());
 	}
 

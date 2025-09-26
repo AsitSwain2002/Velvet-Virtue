@@ -74,4 +74,34 @@ public class ProductsController {
 		}
 	}
 
+	@PostMapping("like-product/{productId}")
+	public ResponseEntity<?> likeProduct(@PathVariable int productId) {
+		boolean like = productService.likeProduct(productId);
+		if (like) {
+			return ResponseBuilder.withOutData("Liked Successfully", HttpStatus.OK);
+		} else {
+			return ResponseBuilder.withOutData("Internal Server Error", HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+
+	@PostMapping("dislike-product/{productId}")
+	public ResponseEntity<?> dislikeProduct(@PathVariable int productId) {
+		boolean dislike = productService.dislikeProduct(productId);
+		if (dislike) {
+			return ResponseBuilder.withOutData("DisLiked Successfully", HttpStatus.OK);
+		} else {
+			return ResponseBuilder.withOutData("Internal Server Error", HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+
+	@GetMapping("all-likedProducts")
+	public ResponseEntity<?> allLikedProduct() {
+		int UserId = 1;
+		List<ProductsDto> allLikedProduct = productService.allLikedProduct(UserId);
+		if (!ObjectUtils.isEmpty(allLikedProduct)) {
+			return ResponseBuilder.withData("Fetched Successfully", allLikedProduct, HttpStatus.OK);
+		} else {
+			return ResponseBuilder.withOutData("No Liked Product Found", HttpStatus.NOT_FOUND);
+		}
+	}
 }
