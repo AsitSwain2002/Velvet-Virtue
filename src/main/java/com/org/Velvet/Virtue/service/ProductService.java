@@ -14,6 +14,12 @@ public interface ProductService {
 	void deleteProduct(int id);
 
 	List<ProductsDto> allProduct();
-    
+
 	List<ProductsDto> searchProduct(String name);
+
+	boolean likeProduct(int id);
+
+	boolean dislikeProduct(int id);
+
+	List<ProductsDto> allLikedProduct(int userId);
 }

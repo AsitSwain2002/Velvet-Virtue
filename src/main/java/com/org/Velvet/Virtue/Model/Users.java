@@ -30,10 +30,12 @@ public class Users {
 	private String email;
 	private String password;
 	private String age;
+	private boolean isDeleted;
 	@OneToMany(mappedBy = "users", cascade = CascadeType.ALL)
 	private List<Address> address;
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	private List<Roles> roles;
-	private boolean isDeleted;
+	@OneToMany(mappedBy = "users", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<LikedProduct> likedProducts;
 
 }
