@@ -3,6 +3,7 @@ package com.org.Velvet.Virtue.service;
 import java.util.List;
 
 import com.org.Velvet.Virtue.Dto.CartDto;
+import com.org.Velvet.Virtue.Model.Cart;
 
 public interface CartService {
 
@@ -15,4 +16,6 @@ public interface CartService {
 	List<CartDto> findAllCart(int userId);
 
 	void removeCart(int cartId);
+
+	void removeAllCartItem(int userId);
 }
