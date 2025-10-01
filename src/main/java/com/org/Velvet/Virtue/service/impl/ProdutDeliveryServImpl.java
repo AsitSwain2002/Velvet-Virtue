@@ -65,14 +65,15 @@ public class ProdutDeliveryServImpl implements ProductDeliveryService {
 			order.setOrderDate(LocalDate.now());
 			ProductDelivery save = deliveryRepo.save(order);
 			if (!ObjectUtils.isEmpty(save)) {
-				res = true; 
+				cartService.removeAllCartItem(userId);
+				res = true;
 			}
 		}
 
 		return res;
 	}
 
-	private void setOrderId(ProductDelivery order) {
+	private void setOrderId(ProductDelivery order) { 
 		String string = UUID.randomUUID().toString();
 		order.setOrderId(string);
 
