@@ -34,6 +34,7 @@ public class CartServiceImpl implements CartService {
 
 	@Override
 	public boolean addToCart(CartDto cartDto) {
+		int userId = 1;
 		Cart cart = mapper.map(cartDto, Cart.class);
 		if (cartDto.getId() != 0) {
 			updateCart(cart, cartDto);
@@ -41,8 +42,7 @@ public class CartServiceImpl implements CartService {
 			// change latter use product service find by id
 			Products product = productRepo.findById(cartDto.getProductsId())
 					.orElseThrow(() -> new ResourceNotFoundException("Product Not Found"));
-			Users user = userRepo.findById(cartDto.getUserId())
-					.orElseThrow(() -> new ResourceNotFoundException("User Not found"));
+			Users user = userRepo.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User Not found"));
 			cart.setQuantity(cartDto.getQuantity());
 		}
 		Cart save = cartRepo.save(cart);

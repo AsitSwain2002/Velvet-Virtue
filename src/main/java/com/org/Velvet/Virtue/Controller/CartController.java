@@ -29,7 +29,7 @@ public class CartController {
 	public ResponseEntity<?> savCart(@RequestBody CartDto cartDto) {
 		boolean addToCart = cartService.addToCart(cartDto);
 		if (addToCart) {
-			return ResponseBuilder.withOutData("Increment Successfully", HttpStatus.CREATED);
+			return ResponseBuilder.withOutData("Saved Successfully", HttpStatus.CREATED);
 		} else {
 			return ResponseBuilder.withOutData("Internal Server Error", HttpStatus.INTERNAL_SERVER_ERROR);
 		}
@@ -39,7 +39,7 @@ public class CartController {
 	public ResponseEntity<?> increment(@PathVariable int cartId) {
 		boolean addToCart = cartService.incrementProduct(cartId);
 		if (addToCart) {
-			return ResponseBuilder.withOutData("Saved Successfully", HttpStatus.CREATED);
+			return ResponseBuilder.withOutData("Increment Successfully", HttpStatus.OK);
 		} else {
 			return ResponseBuilder.withOutData("Out Of Stock", HttpStatus.CONFLICT);
 		}
