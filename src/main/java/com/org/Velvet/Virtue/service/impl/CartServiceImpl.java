@@ -91,4 +91,11 @@ public class CartServiceImpl implements CartService {
 		cartRepo.delete(cart);
 	}
 
+	@Override
+	public void removeAllCartItem(int userId) {
+		Users user = userRepo.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User Not found"));
+		List<Cart> findAllByUser = cartRepo.findAllByUser(user);
+		cartRepo.deleteAll(findAllByUser);
+
+	}
 }
