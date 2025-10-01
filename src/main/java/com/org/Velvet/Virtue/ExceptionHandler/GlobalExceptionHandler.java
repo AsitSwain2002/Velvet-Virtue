@@ -19,4 +19,9 @@ public class GlobalExceptionHandler {
 	public static ResponseEntity<?> resourceNotFound(IllegalArgumentException ex) {
 		return ResponseBuilder.withOutData(ex.getMessage(), HttpStatus.NOT_FOUND);
 	}
+
+	@ExceptionHandler(NullPointerException.class)
+	public static ResponseEntity<?> nullPointerException(NullPointerException ex) {
+		return ResponseBuilder.withOutData(ex.getMessage(), HttpStatus.NOT_FOUND);
+	}
 }
