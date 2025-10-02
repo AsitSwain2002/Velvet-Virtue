@@ -1,7 +1,9 @@
 package com.org.Velvet.Virtue.Dto;
 
 import java.time.LocalDate;
+import java.util.List;
 
+import com.org.Velvet.Virtue.Dto.UsersDto.RolesDto;
 import com.org.Velvet.Virtue.Model.Address;
 import com.org.Velvet.Virtue.Model.OrderStatus;
 import com.org.Velvet.Virtue.Model.Products;
@@ -34,5 +36,18 @@ public class ProductDeliveryDto {
 	@AllArgsConstructor
 	public static class OrderStatusDto {
 		private int id;
+	}
+
+	@Getter
+	@Setter
+	@NoArgsConstructor
+	@AllArgsConstructor
+	public static class UsersDto {
+		private String firstName;
+		private String lastName;
+		private String mobile;
+		private String email;
+		private String password;
+		private String age;
 	}
 }
