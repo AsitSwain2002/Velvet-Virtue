@@ -14,7 +14,7 @@ import com.org.Velvet.Virtue.Repo.ProductTypeRepo;
 import com.org.Velvet.Virtue.service.ProductTypeService;
 
 @Service
-public class ProductServImpl implements ProductTypeService {
+public class ProductTypeServImpl implements ProductTypeService {
 
 	@Autowired
 	private ModelMapper mapper;

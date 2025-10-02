@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
+import com.org.Velvet.Virtue.Dto.AddressDto;
 import com.org.Velvet.Virtue.Dto.CartDto;
 import com.org.Velvet.Virtue.Dto.ProductDeliveryDto;
 import com.org.Velvet.Virtue.Dto.UsersDto;
@@ -28,8 +29,10 @@ import com.org.Velvet.Virtue.service.CartService;
 import com.org.Velvet.Virtue.service.ProductDeliveryService;
 import com.org.Velvet.Virtue.service.UsersService;
 
+import jakarta.persistence.criteria.Order;
+
 @Service
-public class ProdutDeliveryServImpl implements ProductDeliveryService {
+public class ProductDeliveryServImpl implements ProductDeliveryService {
 
 	@Autowired
 	private ModelMapper mapper;
@@ -73,7 +76,7 @@ public class ProdutDeliveryServImpl implements ProductDeliveryService {
 		return res;
 	}
 
-	private void setOrderId(ProductDelivery order) { 
+	private void setOrderId(ProductDelivery order) {
 		String string = UUID.randomUUID().toString();
 		order.setOrderId(string);
 
@@ -117,6 +120,96 @@ public class ProdutDeliveryServImpl implements ProductDeliveryService {
 		OrderStatus orderStatus = statusRepo.findById(ststusId)
 				.orElseThrow(() -> new ResourceNotFoundException(" Order Status is Invalid"));
 		order.setOrderStatus(orderStatus);
+	}
+
+	@Override
+	public boolean updateStatus(int deliveryId, int statusId) {
+		ProductDelivery order = deliveryRepo.findById(deliveryId)
+				.orElseThrow(() -> new ResourceNotFoundException(" Order Not Found"));
+		OrderStatus status = statusRepo.findById(statusId)
+				.orElseThrow(() -> new ResourceNotFoundException(" Order Status is Invalid"));
+		order.setOrderStatus(status);
+		deliveryRepo.save(order);
+		return true;
+	}
+
+	@Override
+	public void cancelOrder(int deliveryId) {
+		ProductDelivery order = deliveryRepo.findById(deliveryId)
+				.orElseThrow(() -> new ResourceNotFoundException(" Order Not Found"));
+		OrderStatus status = statusRepo.findById(9)
+				.orElseThrow(() -> new ResourceNotFoundException(" Order Status is Invalid"));
+		order.setOrderStatus(status);
+		deliveryRepo.save(order);
+	}
+
+	@Override
+	public ProductDeliveryDto trackDelivery(int deliveryId) {
+		ProductDelivery order = deliveryRepo.findById(deliveryId)
+				.orElseThrow(() -> new ResourceNotFoundException(" Order Not Found"));
+		return mapper.map(order, ProductDeliveryDto.class);
+	}
+
+	@Override
+	public List<ProductDeliveryDto> getDeliveryHistory(int userId) {
+		UsersDto findById = userService.findById(userId);
+		OrderStatus staus = statusRepo.findById(5).orElseThrow(() -> new ResourceNotFoundException(" Order Not Found"));
+		List<ProductDelivery> allOrder = deliveryRepo.findAllByUsersAndOrderStatus(mapper.map(findById, Users.class),
+				staus);
+		return allOrder.stream().map(e -> mapper.map(e, ProductDeliveryDto.class)).collect(Collectors.toList());
+	}
+
+	@Override
+	public boolean updateDeliveryAddress(int deliveryId, AddressDto newAddress) {
+		// convert address dto to address
+		Address reAddress = mapper.map(newAddress, Address.class);
+
+		ProductDelivery order = deliveryRepo.findById(deliveryId)
+				.orElseThrow(() -> new ResourceNotFoundException(" Order Not Found"));
+		Address dbAddress = order.getAddress();
+
+		// update existing data on address table
+		updateAddress(dbAddress, reAddress);
+
+		order.setAddress(dbAddress);
+		ProductDelivery save = deliveryRepo.save(order);
+		if (!ObjectUtils.isEmpty(save)) {
+			return true;
+		}
+		return false;
+	}
+
+	private void updateAddress(Address address, Address newAddress) {
+		if (newAddress.getHouseNo() != null) {
+			address.setHouseNo(newAddress.getHouseNo());
+		}
+		if (newAddress.getStreetName() != null) {
+			address.setStreetName(newAddress.getStreetName());
+		}
+		if (newAddress.getArea() != null) {
+			address.setArea(newAddress.getArea());
+		}
+		if (newAddress.getLandmark() != null) {
+			address.setLandmark(newAddress.getLandmark());
+		}
+		if (newAddress.getCity() != null) {
+			address.setCity(newAddress.getCity());
+		}
+		if (newAddress.getDistrict() != null) {
+			address.setDistrict(newAddress.getDistrict());
+		}
+		if (newAddress.getState() != null) {
+			address.setState(newAddress.getState());
+		}
+		if (newAddress.getPincode() != null) {
+			address.setPincode(newAddress.getPincode());
+		}
+		if (newAddress.getCountry() != null) {
+			address.setCountry(newAddress.getCountry());
+		}
+		if (newAddress.getType() != null) {
+			address.setType(newAddress.getType());
+		}
 	}
 
 }
