@@ -19,6 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.org.Velvet.Virtue.Dto.ProductTypeDto;
 import com.org.Velvet.Virtue.Dto.ProductsDto;
+import com.org.Velvet.Virtue.Dto.ReviewDto;
 import com.org.Velvet.Virtue.Util.ResponseBuilder;
 import com.org.Velvet.Virtue.service.ProductService;
 import com.org.Velvet.Virtue.service.ProductTypeService;
@@ -102,6 +103,16 @@ public class ProductsController {
 			return ResponseBuilder.withData("Fetched Successfully", allLikedProduct, HttpStatus.OK);
 		} else {
 			return ResponseBuilder.withOutData("No Liked Product Found", HttpStatus.NOT_FOUND);
+		}
+	}
+
+	@PostMapping("add-review")
+	public ResponseEntity<?> addReview(@RequestBody ReviewDto reviewDto) {
+		boolean review = productService.addReview(reviewDto);
+		if (review) {
+			return ResponseBuilder.withOutData("Review Added  Successfully", HttpStatus.OK);
+		} else {
+			return ResponseBuilder.withOutData("Internal Server Error", HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 }

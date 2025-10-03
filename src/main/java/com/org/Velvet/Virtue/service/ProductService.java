@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.org.Velvet.Virtue.Dto.ProductsDto;
+import com.org.Velvet.Virtue.Dto.ReviewDto;
 
 public interface ProductService {
 
@@ -22,4 +23,13 @@ public interface ProductService {
 	boolean dislikeProduct(int id);
 
 	List<ProductsDto> allLikedProduct(int userId);
+
+	boolean addReview(ReviewDto reviewDto);
+
+	void deleteReview(int reviewId);
+
+	List<ReviewDto> allReviewByUser(int userId);
+
+	List<ReviewDto> allReviews();
+
 }
