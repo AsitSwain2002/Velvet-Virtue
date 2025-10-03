@@ -23,17 +23,22 @@ import org.springframework.web.multipart.MultipartFile;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.org.Velvet.Virtue.Dto.CategoryDto;
 import com.org.Velvet.Virtue.Dto.ProductsDto;
+import com.org.Velvet.Virtue.Dto.ReviewDto;
 import com.org.Velvet.Virtue.ExceptionHandler.ResourceNotFoundException;
+import com.org.Velvet.Virtue.ExceptionHandler.ReviewNotAllowedException;
 import com.org.Velvet.Virtue.Model.Category;
 import com.org.Velvet.Virtue.Model.FileDetails;
 import com.org.Velvet.Virtue.Model.LikedProduct;
+import com.org.Velvet.Virtue.Model.ProductDelivery;
 import com.org.Velvet.Virtue.Model.ProductType;
 import com.org.Velvet.Virtue.Model.Products;
+import com.org.Velvet.Virtue.Model.Review;
 import com.org.Velvet.Virtue.Model.Users;
 import com.org.Velvet.Virtue.Repo.FileRepo;
 import com.org.Velvet.Virtue.Repo.LikedProductRepo;
 import com.org.Velvet.Virtue.Repo.ProductRepo;
 import com.org.Velvet.Virtue.Repo.ProductTypeRepo;
+import com.org.Velvet.Virtue.Repo.ReviewRepo;
 import com.org.Velvet.Virtue.Repo.UsersRepo;
 import com.org.Velvet.Virtue.service.CategoryService;
 import com.org.Velvet.Virtue.service.ProductService;
@@ -58,6 +63,9 @@ public class ProductServiceImpl implements ProductService {
 
 	@Autowired
 	private UsersRepo usersRepo;
+
+	@Autowired
+	private ReviewRepo reviewRepo;
 
 	@Value("${file.upload.path}")
 	private String folderName;
@@ -276,6 +284,80 @@ public class ProductServiceImpl implements ProductService {
 		// find product from likedProduct
 		List<Products> products = likedProducts.stream().map(e -> e.getProducts()).collect(Collectors.toList());
 		return products.stream().map(e -> mapper.map(e, ProductsDto.class)).collect(Collectors.toList());
+	}
+
+	@Override
+	public boolean addReview(ReviewDto reviewDto) {
+		Review review = mapper.map(reviewDto, Review.class);
+		Users users = usersRepo.findById(review.getUser().getId())
+				.orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+		// check the user is buy the product or not
+		checkProductBuyOrNoByUser(users, review);
+
+		review.setUser(users);
+		Products product = productRepo.findById(review.getProducts().getId())
+				.orElseThrow(() -> new ResourceNotFoundException("Product Not found"));
+		review.setProducts(product);
+		Review save = reviewRepo.save(review);
+		if (!ObjectUtils.isEmpty(save)) {
+			setRatingInProduct(product);
+			productRepo.save(product);
+			return true;
+		}
+		return false;
+	}
+
+	private void checkProductBuyOrNoByUser(Users users, Review review) {
+
+		Integer productId = review.getProducts().getId();
+
+		System.out.println();
+		System.out.println(productId);
+		System.out.println();
+		List<ProductDelivery> productDeliveries = users.getProductDeliveries();
+		ProductDelivery productDelivery = productDeliveries.stream().filter(e -> e.getId() == productId).findFirst()
+				.get();
+		System.out.println();
+		System.out.println(productDelivery);
+		System.out.println(productDelivery.getOrderStatus().getName());
+		if (ObjectUtils.isEmpty(productDelivery) || !"DELIVERED".equals(productDelivery.getOrderStatus().getName())) {
+			throw new ReviewNotAllowedException(
+					"Your product is not delivered yet or you have not purchased the product.");
+		}
+	}
+
+	// set product rating here
+	private void setRatingInProduct(Products product) {
+
+		List<Review> reviews = product.getReviews();
+		if (reviews.isEmpty()) {
+			product.setRating(0);
+			return;
+		}
+		double avg = reviews.stream().mapToDouble(Review::getRating) // take only rating values
+				.average() // find average
+				.orElse(0.0);
+		product.setRating(avg);
+
+	}
+
+	@Override
+	public void deleteReview(int reviewId) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public List<ReviewDto> allReviewByUser(int userId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<ReviewDto> allReviews() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

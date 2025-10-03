@@ -24,4 +24,9 @@ public class GlobalExceptionHandler {
 	public static ResponseEntity<?> nullPointerException(NullPointerException ex) {
 		return ResponseBuilder.withOutData(ex.getMessage(), HttpStatus.NOT_FOUND);
 	}
+
+	@ExceptionHandler(ReviewNotAllowedException.class)
+	public static ResponseEntity<?> reviewNotAllowedException(ReviewNotAllowedException ex) {
+		return ResponseBuilder.withOutData(ex.getMessage(), HttpStatus.FORBIDDEN);
+	}
 }

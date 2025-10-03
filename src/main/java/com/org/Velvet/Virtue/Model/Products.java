@@ -35,6 +35,7 @@ public class Products extends SuperClass {
 	private double price;
 	private int discount;
 	private double priceAfterDiscount;
+	private double rating;
 	@ManyToOne
 	@JoinColumn
 	private Category category;
@@ -44,5 +45,7 @@ public class Products extends SuperClass {
 	private ProductType productType;
 	@OneToMany(mappedBy = "products", cascade = CascadeType.ALL)
 	private List<LikedProduct> likedProducts;
+	@OneToMany(mappedBy = "products", cascade = CascadeType.ALL)
+	private List<Review> reviews;
 
 }

@@ -39,5 +39,9 @@ public class Users {
 	private List<LikedProduct> likedProducts;
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<Cart> carts;
+	@OneToMany(mappedBy = "users", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<ProductDelivery> productDeliveries;
+	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+	private List<Review> reviews;
 
 }
