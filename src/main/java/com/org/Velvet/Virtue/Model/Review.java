@@ -22,6 +22,7 @@ public class Review {
 	private int id;
 	private double rating;
 	private String comment;
+	private boolean deleted;
 	@ManyToOne
 	private Users user;
 	@ManyToOne

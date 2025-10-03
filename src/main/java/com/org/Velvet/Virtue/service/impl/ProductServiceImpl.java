@@ -286,6 +286,7 @@ public class ProductServiceImpl implements ProductService {
 		return products.stream().map(e -> mapper.map(e, ProductsDto.class)).collect(Collectors.toList());
 	}
 
+	// add review logic written here
 	@Override
 	public boolean addReview(ReviewDto reviewDto) {
 		Review review = mapper.map(reviewDto, Review.class);
@@ -308,19 +309,14 @@ public class ProductServiceImpl implements ProductService {
 		return false;
 	}
 
+	// logic for check the user is buy the product and the product is delivered to
+	// the user after that user can give review
 	private void checkProductBuyOrNoByUser(Users users, Review review) {
 
 		Integer productId = review.getProducts().getId();
-
-		System.out.println();
-		System.out.println(productId);
-		System.out.println();
 		List<ProductDelivery> productDeliveries = users.getProductDeliveries();
-		ProductDelivery productDelivery = productDeliveries.stream().filter(e -> e.getId() == productId).findFirst()
-				.get();
-		System.out.println();
-		System.out.println(productDelivery);
-		System.out.println(productDelivery.getOrderStatus().getName());
+		ProductDelivery productDelivery = productDeliveries.stream().filter(e -> e.getProducts().getId() == productId)
+				.findFirst().get();
 		if (ObjectUtils.isEmpty(productDelivery) || !"DELIVERED".equals(productDelivery.getOrderStatus().getName())) {
 			throw new ReviewNotAllowedException(
 					"Your product is not delivered yet or you have not purchased the product.");
@@ -340,24 +336,30 @@ public class ProductServiceImpl implements ProductService {
 				.orElse(0.0);
 		product.setRating(avg);
 
+		// set rating count here
+		product.setRatingCount(product.getRatingCount() + 1);
+
 	}
 
 	@Override
 	public void deleteReview(int reviewId) {
-		// TODO Auto-generated method stub
-
+		Review review = reviewRepo.findById(reviewId).orElseThrow(() -> new ResourceNotFoundException("Id Not Found"));
+		review.setDeleted(true);
+		reviewRepo.save(review);
 	}
 
 	@Override
 	public List<ReviewDto> allReviewByUser(int userId) {
-		// TODO Auto-generated method stub
-		return null;
+		Users users = usersRepo.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+		List<Review> reviews = reviewRepo.findAllByUserAndDeleted(users, false);
+		return reviews.stream().map(e -> mapper.map(e, ReviewDto.class)).collect(Collectors.toList());
 	}
 
 	@Override
 	public List<ReviewDto> allReviews() {
-		// TODO Auto-generated method stub
-		return null;
+		List<Review> reviews = reviewRepo.findAllByDeletedFalse();
+		return reviews.stream().map(e -> mapper.map(e, ReviewDto.class)).collect(Collectors.toList());
 	}
 
 }
