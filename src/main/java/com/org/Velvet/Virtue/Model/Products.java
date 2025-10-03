@@ -36,6 +36,7 @@ public class Products extends SuperClass {
 	private int discount;
 	private double priceAfterDiscount;
 	private double rating;
+	private int ratingCount;
 	@ManyToOne
 	@JoinColumn
 	private Category category;

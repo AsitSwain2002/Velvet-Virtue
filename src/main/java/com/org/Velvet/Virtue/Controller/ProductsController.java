@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -100,13 +101,12 @@ public class ProductsController {
 	public ResponseEntity<?> allLikedProduct() {
 		int UserId = 1;
 		List<ProductsDto> allLikedProduct = productService.allLikedProduct(UserId);
-		if (!ObjectUtils.isEmpty(allLikedProduct)) {
+		if (!CollectionUtils.isEmpty(allLikedProduct)) {
 			return ResponseBuilder.withData("Fetched Successfully", allLikedProduct, HttpStatus.OK);
 		} else {
 			return ResponseBuilder.withOutData("No Liked Product Found", HttpStatus.NOT_FOUND);
 		}
 	}
-
 
 	@PostMapping("add-review")
 	public ResponseEntity<?> addReview(@RequestBody ReviewDto reviewDto) {
@@ -123,6 +123,27 @@ public class ProductsController {
 		productService.deleteProduct(productId);
 		return ResponseBuilder.withOutData("Product Deleted", HttpStatus.NO_CONTENT);
 	}
-	
+
+	@GetMapping("all-user-review")
+	public ResponseEntity<?> allUserReview() {
+		int userId = 1;
+		List<ReviewDto> allReviewByUser = productService.allReviewByUser(userId);
+		if (!CollectionUtils.isEmpty(allReviewByUser)) {
+			return ResponseBuilder.withData("Fetched Successfully", allReviewByUser, HttpStatus.OK);
+		} else {
+			return ResponseBuilder.withOutData("No Liked Product Found", HttpStatus.NOT_FOUND);
+		}
+	}
+
+	@GetMapping("all-review")
+	public ResponseEntity<?> allReview() {
+
+		List<ReviewDto> allReview = productService.allReviews();
+		if (!CollectionUtils.isEmpty(allReview)) {
+			return ResponseBuilder.withData("Fetched Successfully", allReview, HttpStatus.OK);
+		} else {
+			return ResponseBuilder.withOutData("No Liked Product Found", HttpStatus.NOT_FOUND);
+		}
+	}
 
 }
