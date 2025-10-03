@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.ObjectUtils;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
@@ -106,6 +107,7 @@ public class ProductsController {
 		}
 	}
 
+
 	@PostMapping("add-review")
 	public ResponseEntity<?> addReview(@RequestBody ReviewDto reviewDto) {
 		boolean review = productService.addReview(reviewDto);
@@ -115,4 +117,12 @@ public class ProductsController {
 			return ResponseBuilder.withOutData("Internal Server Error", HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
+
+	@DeleteMapping("/delete/{productId}")
+	public ResponseEntity<?> deleteProduct(@PathVariable int productId) {
+		productService.deleteProduct(productId);
+		return ResponseBuilder.withOutData("Product Deleted", HttpStatus.NO_CONTENT);
+	}
+	
+
 }
