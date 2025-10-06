@@ -8,4 +8,6 @@ import com.org.Velvet.Virtue.Model.Category;
 @Repository
 public interface CategoryRepo extends JpaRepository<Category, Integer> {
 
+	boolean existsByName(String name);
+
 }
