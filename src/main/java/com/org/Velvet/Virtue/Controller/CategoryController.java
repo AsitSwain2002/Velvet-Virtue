@@ -26,7 +26,7 @@ public class CategoryController {
 	private CategoryService categoryService;
 
 	@PostMapping("/save-category")
-	public ResponseEntity<?> saveCategory(@RequestBody CategoryDto categoryDto) {
+	public ResponseEntity<?> saveCategory(@RequestBody CategoryDto categoryDto) throws Exception {
 		boolean addCategory = categoryService.addCategory(categoryDto);
 		if (addCategory) {
 			return ResponseBuilder.withOutData("Saved Successfully", HttpStatus.CREATED);
@@ -38,7 +38,7 @@ public class CategoryController {
 	@DeleteMapping("/{id}")
 	public ResponseEntity<?> delete(@PathVariable int id) {
 		categoryService.deleteCategory(id);
-		return ResponseBuilder.withOutData("", HttpStatus.NO_CONTENT);
+		return ResponseEntity.noContent().build();
 	}
 
 	@PostMapping("/active-category/{id}")

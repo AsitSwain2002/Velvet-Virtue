@@ -29,4 +29,9 @@ public class GlobalExceptionHandler {
 	public static ResponseEntity<?> reviewNotAllowedException(ReviewNotAllowedException ex) {
 		return ResponseBuilder.withOutData(ex.getMessage(), HttpStatus.FORBIDDEN);
 	}
+
+	@ExceptionHandler(CategoryValidationException.class)
+	public static ResponseEntity<?> categoryValidationException(CategoryValidationException ex) {
+		return ResponseBuilder.withOutData(ex.getMessage(), HttpStatus.BAD_REQUEST);
+	}
 }

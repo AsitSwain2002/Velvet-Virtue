@@ -6,7 +6,7 @@ import com.org.Velvet.Virtue.Dto.CategoryDto;
 
 public interface CategoryService {
 
-	boolean addCategory(CategoryDto categorydto);
+	boolean addCategory(CategoryDto categorydto) throws Exception;
 
 	void deleteCategory(int id);
 
@@ -15,6 +15,6 @@ public interface CategoryService {
 	boolean removeRecycleBin(int category_id);
 
 	List<CategoryDto> getAllCategory();
-	
+
 	CategoryDto findById(int id);
 }

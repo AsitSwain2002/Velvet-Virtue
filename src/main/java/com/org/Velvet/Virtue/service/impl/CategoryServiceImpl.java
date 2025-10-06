@@ -14,6 +14,7 @@ import com.org.Velvet.Virtue.ExceptionHandler.ResourceNotFoundException;
 import com.org.Velvet.Virtue.Model.Category;
 import com.org.Velvet.Virtue.Repo.CategoryRepo;
 import com.org.Velvet.Virtue.service.CategoryService;
+import com.org.Velvet.Virtue.validation.CategoryValidation;
 
 @Service
 public class CategoryServiceImpl implements CategoryService {
@@ -24,9 +25,15 @@ public class CategoryServiceImpl implements CategoryService {
 	@Autowired
 	private ModelMapper mapper;
 
+	@Autowired
+	private CategoryValidation categoryValidation;
+
 	@Override
-	public boolean addCategory(CategoryDto categorydto) {
+	public boolean addCategory(CategoryDto categorydto) throws Exception {
 		int userId = 1;
+
+		// Category Validation Here
+		categoryValidation.validateCategory(categorydto);
 		Category category = mapper.map(categorydto, Category.class);
 		if (category.getId() != 0) {
 			updateCategory(category);
