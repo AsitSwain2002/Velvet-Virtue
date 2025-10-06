@@ -8,4 +8,6 @@ import com.org.Velvet.Virtue.Model.ProductType;
 @Repository
 public interface ProductTypeRepo extends JpaRepository<ProductType, Integer> {
 
+	boolean existsByType(String name);
+
 }
