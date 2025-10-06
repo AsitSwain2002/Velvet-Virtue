@@ -14,4 +14,6 @@ public interface ProductRepo extends JpaRepository<Products, Integer> {
 
 	List<Products> findByNameContaining(String name);
 
+	boolean existsByName(String pName);
+
 }
