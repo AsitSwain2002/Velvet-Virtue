@@ -34,4 +34,9 @@ public class GlobalExceptionHandler {
 	public static ResponseEntity<?> categoryValidationException(CategoryValidationException ex) {
 		return ResponseBuilder.withOutData(ex.getMessage(), HttpStatus.BAD_REQUEST);
 	}
+
+	@ExceptionHandler(ProductValidationException.class)
+	public static ResponseEntity<?> categoryValidationException(ProductValidationException ex) {
+		return ResponseBuilder.withData(ex.getMessage(), ex.getErrors(), HttpStatus.BAD_REQUEST);
+	}
 }

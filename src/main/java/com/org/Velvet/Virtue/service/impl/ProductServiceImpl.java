@@ -42,6 +42,7 @@ import com.org.Velvet.Virtue.Repo.ReviewRepo;
 import com.org.Velvet.Virtue.Repo.UsersRepo;
 import com.org.Velvet.Virtue.service.CategoryService;
 import com.org.Velvet.Virtue.service.ProductService;
+import com.org.Velvet.Virtue.validation.ProductValidation;
 
 @Service
 public class ProductServiceImpl implements ProductService {
@@ -69,12 +70,16 @@ public class ProductServiceImpl implements ProductService {
 
 	@Value("${file.upload.path}")
 	private String folderName;
+	@Autowired
+	private ProductValidation productValidation;
 
 	@Override
 	public boolean saveProduct(String reqProd, List<MultipartFile> file) throws IOException {
 
 		ObjectMapper ob = new ObjectMapper();
 		ProductsDto productDto = ob.readValue(reqProd, ProductsDto.class);
+		// validation code
+		productValidation.validate(productDto);
 		int userid = 1;
 		Products products = mapper.map(productDto, Products.class);
 
