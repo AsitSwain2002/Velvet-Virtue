@@ -14,4 +14,9 @@ public class ResponseBuilder {
 		GenericResponse gr = GenericResponse.builder().msg(msg).data(data).status(statusCode.value()).build();
 		return gr.createWithData();
 	}
+
+	public static ResponseEntity<?> exceptionDetails(String msg, Object data, HttpStatusCode statusCode) {
+		GenericResponse gr = GenericResponse.builder().msg(msg).data(data).status(statusCode.value()).build();
+		return gr.exceptionDetails();
+	}
 }

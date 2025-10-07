@@ -29,4 +29,12 @@ public class GenericResponse {
 		map.put("status", status);
 		return new ResponseEntity(map, HttpStatusCode.valueOf(status));
 	}
+
+	public ResponseEntity<?> exceptionDetails() {
+		Map<String, Object> map = new LinkedHashMap<String, Object>();
+		map.put("msg", msg);
+		map.put("Errors", data);
+		map.put("status", status);
+		return new ResponseEntity(map, HttpStatusCode.valueOf(status));
+	}
 }
