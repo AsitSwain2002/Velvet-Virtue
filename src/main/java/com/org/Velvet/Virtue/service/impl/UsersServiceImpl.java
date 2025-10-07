@@ -17,6 +17,7 @@ import com.org.Velvet.Virtue.Repo.AddressRepo;
 import com.org.Velvet.Virtue.Repo.RolesRepo;
 import com.org.Velvet.Virtue.Repo.UsersRepo;
 import com.org.Velvet.Virtue.service.UsersService;
+import com.org.Velvet.Virtue.validation.UserValidation;
 
 @Service
 public class UsersServiceImpl implements UsersService {
@@ -29,15 +30,19 @@ public class UsersServiceImpl implements UsersService {
 	private UsersRepo usersRepo;
 	@Autowired
 	private RolesRepo roleRepo;
+	@Autowired
+	private UserValidation userValidation;
 
 	@Override
 	public boolean saveUser(UsersDto usersDto) {
+		// --------- validate user -------
+		userValidation.validateUser(usersDto);
 		Users user = mapper.map(usersDto, Users.class);
 		if (usersDto.getId() != null) {
 
 			// only you can update user not address for address I will create another end
 			// point
-			updateUser(user);
+			updateUser(user); 
 		}
 		setRole(user.getRoles(), user);
 		setAddress(user);

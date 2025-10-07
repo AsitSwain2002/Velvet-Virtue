@@ -8,4 +8,6 @@ import com.org.Velvet.Virtue.Model.Users;
 @Repository
 public interface UsersRepo extends JpaRepository<Users, Integer> {
 
+	boolean existsByEmail(String email);
+
 }

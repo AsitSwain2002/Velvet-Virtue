@@ -37,12 +37,16 @@ public class GlobalExceptionHandler {
 
 	@ExceptionHandler(ProductValidationException.class)
 	public static ResponseEntity<?> categoryValidationException(ProductValidationException ex) {
-		return ResponseBuilder.withData(ex.getMessage(), ex.getErrors(), HttpStatus.BAD_REQUEST);
+		return ResponseBuilder.exceptionDetails(ex.getMessage(), ex.getErrors(), HttpStatus.BAD_REQUEST);
 	}
 
 	@ExceptionHandler(ProductTypeValidationException.class)
-	public static ResponseEntity<?> categoryValidationException(ProductTypeValidationException ex) {
+	public static ResponseEntity<?> productTypeValidationException(ProductTypeValidationException ex) {
 		return ResponseBuilder.withOutData(ex.getMessage(), HttpStatus.BAD_REQUEST);
+	}
+	@ExceptionHandler(UserValidationException.class)
+	public static ResponseEntity<?> userValidationException(UserValidationException ex) {
+		return ResponseBuilder.exceptionDetails(ex.getMessage(), ex.getError(), HttpStatus.BAD_REQUEST);
 	}
 
 }
