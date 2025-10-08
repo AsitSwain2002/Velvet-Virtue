@@ -5,6 +5,7 @@ import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
@@ -32,6 +33,8 @@ public class UsersServiceImpl implements UsersService {
 	private RolesRepo roleRepo;
 	@Autowired
 	private UserValidation userValidation;
+	@Autowired
+	private BCryptPasswordEncoder encoder;
 
 	@Override
 	public boolean saveUser(UsersDto usersDto) {
@@ -42,14 +45,19 @@ public class UsersServiceImpl implements UsersService {
 
 			// only you can update user not address for address I will create another end
 			// point
-			updateUser(user); 
+			updateUser(user);
 		}
+		setPassword(user);
 		setRole(user.getRoles(), user);
 		setAddress(user);
 		if (!ObjectUtils.isEmpty(usersRepo.save(user))) {
 			return true;
 		}
 		return false;
+	}
+
+	private void setPassword(Users user) {
+		user.setPassword(encoder.encode(user.getPassword()));
 	}
 
 	private void updateUser(Users user) {

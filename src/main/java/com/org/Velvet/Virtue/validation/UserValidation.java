@@ -73,9 +73,9 @@ public class UserValidation {
 			// ------- Password validation ------
 			if (password == null) {
 				error.put("password", "password can't be null");
-			} else if (password.length() <= 6) {
+			} else if (password.length() < 6) {
 				error.put("password", "Minimum 6 character required");
-			} else if (password.length() >= 8) {
+			} else if (password.length() > 8) {
 				error.put("password", "Maximum 8 character allowed");
 			}
 
