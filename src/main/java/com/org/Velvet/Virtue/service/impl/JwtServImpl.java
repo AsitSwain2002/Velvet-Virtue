@@ -9,8 +9,10 @@ import java.util.Map;
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -36,7 +38,7 @@ public class JwtServImpl implements JwtService {
 	@Override
 	public String generateTooken(Users users) {
 		Map<String, Object> claim = new HashMap<String, Object>();
-
+		claim.put("role", users.getRoles());
 		return Jwts.builder().claims().add(claim).subject(users.getEmail())
 				.issuedAt(new Date(System.currentTimeMillis()))
 				.expiration(new Date(System.currentTimeMillis() + 20L * 60 * 60 * 1000)).and().signWith(getKey())
@@ -48,4 +50,29 @@ public class JwtServImpl implements JwtService {
 		return Keys.hmacShaKeyFor(decode);
 	}
 
+	@Override
+	public String extractUsername(String token) {
+		Claims allClaims = extractClaims(token);
+		return allClaims.getSubject();
+	}
+
+	private Claims extractClaims(String jwtToken) {
+		return Jwts.parser().verifyWith(decryptKey()).build().parseSignedClaims(jwtToken).getPayload();
+
+	}
+
+	private SecretKey decryptKey() {
+		byte[] decode = Decoders.BASE64.decode(token);
+		return Keys.hmacShaKeyFor(decode);
+	}
+
+	@Override
+	public boolean validateToken(String token, UserDetails loadUserByUsername) {
+		Claims extractClaims = extractClaims(token);
+		boolean isExpaired = extractClaims.getExpiration().before(new Date(System.currentTimeMillis()));
+		if (extractClaims.getSubject().equalsIgnoreCase(loadUserByUsername.getUsername()) && !isExpaired) {
+			return true;
+		}
+		return false;
+	}	
 }

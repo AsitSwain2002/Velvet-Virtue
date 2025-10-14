@@ -29,14 +29,17 @@ public class AuthServiceImpl implements AuthService {
 
 	@Override
 	public ResponseDto login(RequestDto requestDto) {
-		ResponseDto responseDto = new ResponseDto();
+
 		Users user = usersRepo.findByEmail(requestDto.getUserName());
+
 		Authentication authenticate = authenticationManager.authenticate(
 				new UsernamePasswordAuthenticationToken(requestDto.getUserName(), requestDto.getPassword()));
+
 		if (authenticate.isAuthenticated()) {
+			ResponseDto responseDto = new ResponseDto();
 			responseDto.setUser(mapper.map(user, UsersDto.class));
 			responseDto.setToken(jwtService.generateTooken(user));
-			return responseDto;
+			return responseDto; 	
 		}
 		return null;
 	}
