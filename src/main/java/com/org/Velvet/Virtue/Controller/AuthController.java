@@ -22,8 +22,8 @@ public class AuthController {
 
 	@PostMapping("/login")
 	public ResponseEntity<?> login(@RequestBody RequestDto requestDto) {
+		
 		ResponseDto login = authService.login(requestDto);
-
 		if (login != null) {
 			return ResponseBuilder.withData("Login Successful", login, HttpStatus.OK);
 		} else {

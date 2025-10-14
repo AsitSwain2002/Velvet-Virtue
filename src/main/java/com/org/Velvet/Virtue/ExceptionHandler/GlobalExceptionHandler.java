@@ -1,10 +1,15 @@
 package com.org.Velvet.Virtue.ExceptionHandler;
 
+import java.time.LocalDateTime;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import com.org.NoteMakingApp.ExceptionHandler.ExceptionData;
+import com.org.NoteMakingApp.util.GenericResponceBuilder;
 import com.org.Velvet.Virtue.Util.ResponseBuilder;
 
 @RestControllerAdvice
@@ -18,6 +23,11 @@ public class GlobalExceptionHandler {
 	@ExceptionHandler(IllegalArgumentException.class)
 	public static ResponseEntity<?> resourceNotFound(IllegalArgumentException ex) {
 		return ResponseBuilder.withOutData(ex.getMessage(), HttpStatus.NOT_FOUND);
+	}
+
+	@ExceptionHandler(BadCredentialsException.class)
+	public static ResponseEntity<?> badCredentialsException(BadCredentialsException e) {
+		return ResponseBuilder.withOutData(e.getMessage(), HttpStatus.NOT_FOUND);
 	}
 
 	@ExceptionHandler(NullPointerException.class)
@@ -44,6 +54,7 @@ public class GlobalExceptionHandler {
 	public static ResponseEntity<?> productTypeValidationException(ProductTypeValidationException ex) {
 		return ResponseBuilder.withOutData(ex.getMessage(), HttpStatus.BAD_REQUEST);
 	}
+
 	@ExceptionHandler(UserValidationException.class)
 	public static ResponseEntity<?> userValidationException(UserValidationException ex) {
 		return ResponseBuilder.exceptionDetails(ex.getMessage(), ex.getError(), HttpStatus.BAD_REQUEST);
