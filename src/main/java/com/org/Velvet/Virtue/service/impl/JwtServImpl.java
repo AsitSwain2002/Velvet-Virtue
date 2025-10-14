@@ -13,10 +13,14 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import io.jsonwebtoken.security.SignatureException;
 
+import com.org.Velvet.Virtue.ExceptionHandler.InvalidJwtToken;
+import com.org.Velvet.Virtue.ExceptionHandler.JwtTokenExpaired;
 import com.org.Velvet.Virtue.Model.Users;
 import com.org.Velvet.Virtue.service.JwtService;
 
@@ -57,7 +61,15 @@ public class JwtServImpl implements JwtService {
 	}
 
 	private Claims extractClaims(String jwtToken) {
-		return Jwts.parser().verifyWith(decryptKey()).build().parseSignedClaims(jwtToken).getPayload();
+		try {
+			return Jwts.parser().verifyWith(decryptKey()).build().parseSignedClaims(jwtToken).getPayload();
+		} catch (SignatureException e) {
+			throw new InvalidJwtToken("Invalid Token");
+		} catch (ExpiredJwtException e) {
+			throw new JwtTokenExpaired("Token Expaired");
+		} catch (Exception e) {
+			throw e;
+		}
 
 	}
 
@@ -74,5 +86,5 @@ public class JwtServImpl implements JwtService {
 			return true;
 		}
 		return false;
-	}	
+	}
 }

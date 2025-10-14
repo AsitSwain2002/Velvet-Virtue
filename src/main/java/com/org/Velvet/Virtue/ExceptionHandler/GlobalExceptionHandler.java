@@ -8,8 +8,6 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import com.org.NoteMakingApp.ExceptionHandler.ExceptionData;
-import com.org.NoteMakingApp.util.GenericResponceBuilder;
 import com.org.Velvet.Virtue.Util.ResponseBuilder;
 
 @RestControllerAdvice
