@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,6 +26,7 @@ public class CartController {
 	@Autowired
 	private CartService cartService;
 
+	@PreAuthorize("hasRole('USER')")
 	@PostMapping("save-cart")
 	public ResponseEntity<?> savCart(@RequestBody CartDto cartDto) {
 		boolean addToCart = cartService.addToCart(cartDto);
@@ -35,6 +37,7 @@ public class CartController {
 		}
 	}
 
+	@PreAuthorize("hasRole('USER')")
 	@PostMapping("increment/{cartId}")
 	public ResponseEntity<?> increment(@PathVariable int cartId) {
 		boolean addToCart = cartService.incrementProduct(cartId);
@@ -45,6 +48,7 @@ public class CartController {
 		}
 	}
 
+	@PreAuthorize("hasRole('USER')")
 	@PostMapping("decrement/{cartId}")
 	public ResponseEntity<?> decrement(@PathVariable int cartId) {
 		boolean addToCart = cartService.decrementProduct(cartId);
@@ -55,6 +59,7 @@ public class CartController {
 		}
 	}
 
+	@PreAuthorize("hasRole('USER')")
 	@GetMapping("all-cart-item")
 	public ResponseEntity<?> allCartItem() {
 		int userId = 1;
@@ -66,6 +71,7 @@ public class CartController {
 		}
 	}
 
+	@PreAuthorize("hasRole('USER')")
 	@DeleteMapping("delete-cart/{id}")
 	public ResponseEntity<?> deleteCart(@PathVariable int id) {
 		cartService.removeCart(id);
