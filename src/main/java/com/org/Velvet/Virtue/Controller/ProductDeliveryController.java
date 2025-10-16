@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -27,6 +28,7 @@ public class ProductDeliveryController {
 	@Autowired
 	private ProductDeliveryService deliveryService;
 
+	@PreAuthorize("hasRole('USER')")
 	@PostMapping("save-delhivery")
 	public ResponseEntity<?> saveDelhivery(@RequestBody ProductDeliveryDto deliveryDto) {
 		boolean saveDelivery = deliveryService.saveDelivery(deliveryDto);
@@ -37,6 +39,7 @@ public class ProductDeliveryController {
 		}
 	}
 
+	@PreAuthorize("hasRole('USER')")
 	@PostMapping("update-delhivery-status/{deliveryId}/{statusId}")
 	public ResponseEntity<?> updateStatus(@PathVariable int deliveryId, @PathVariable int statusId) {
 		boolean updateStatus = deliveryService.updateStatus(deliveryId, statusId);
@@ -47,12 +50,14 @@ public class ProductDeliveryController {
 		}
 	}
 
+	@PreAuthorize("hasAnyRole('USER','ADMIN','SELLER')")
 	@PostMapping("cancel-order/{deliveryId}")
 	public ResponseEntity<?> cancelOrder(@PathVariable int deliveryId) {
 		deliveryService.cancelOrder(deliveryId);
 		return ResponseBuilder.withOutData("Order Cancelled Successfully", HttpStatus.OK);
 	}
 
+	@PreAuthorize("hasAnyRole('USER','ADMIN')")
 	@GetMapping("track-order/{deliveryId}")
 	public ResponseEntity<?> trackOrder(@PathVariable int deliveryId) {
 		ProductDeliveryDto trackDelivery = deliveryService.trackDelivery(deliveryId);
@@ -63,6 +68,7 @@ public class ProductDeliveryController {
 		}
 	}
 
+	@PreAuthorize("hasAnyRole('USER',ADMIN')")
 	@GetMapping("delivery-history")
 	public ResponseEntity<?> deliveryHistory() {
 		// change later
@@ -74,7 +80,7 @@ public class ProductDeliveryController {
 			return ResponseBuilder.withOutData("Nothing Found", HttpStatus.NOT_FOUND);
 		}
 	}
-
+	@PreAuthorize("hasRole('USER')")
 	@PutMapping("update-address/{deliveryId}")
 	public ResponseEntity<?> updateAddress(@PathVariable int deliveryId, @RequestBody AddressDto addressDto) {
 		boolean updateDeliveryAddress = deliveryService.updateDeliveryAddress(deliveryId, addressDto);
