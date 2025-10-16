@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -36,6 +37,7 @@ public class ProductsController {
 	@Autowired
 	private ProductTypeService productTypeService;
 
+	@PreAuthorize("hasRole('SELLER')")
 	@PostMapping(value = "/save-product", consumes = { "multipart/form-data" })
 	public ResponseEntity<?> saveProduct(@RequestParam String productsDto,
 			@RequestParam(required = false) List<MultipartFile> files) throws IOException {
@@ -47,6 +49,7 @@ public class ProductsController {
 		}
 	}
 
+	@PreAuthorize("hasRole('ADMIN')")
 	@PostMapping("/save-product-type")
 	public ResponseEntity<?> saveProductType(@RequestBody ProductTypeDto dto) {
 		boolean saveType = productTypeService.saveType(dto);
@@ -57,6 +60,7 @@ public class ProductsController {
 		}
 	}
 
+	@PreAuthorize("hasRole('SELLER','ADMIN)")
 	@GetMapping("/search-product/{name}")
 	public ResponseEntity<?> searchProduct(@PathVariable String name) {
 		List<ProductsDto> allProduct = productService.searchProduct(name);
@@ -67,6 +71,7 @@ public class ProductsController {
 		}
 	}
 
+	@PreAuthorize("hasAnyRole('SELLER','ADMIN','USER')")
 	@GetMapping("/all-product")
 	public ResponseEntity<?> allProduct() {
 		List<ProductsDto> allProduct = productService.allProduct();
@@ -77,6 +82,7 @@ public class ProductsController {
 		}
 	}
 
+	@PreAuthorize("hasRole('USER')")
 	@PostMapping("like-product/{productId}")
 	public ResponseEntity<?> likeProduct(@PathVariable int productId) {
 		boolean like = productService.likeProduct(productId);
@@ -87,6 +93,7 @@ public class ProductsController {
 		}
 	}
 
+	@PreAuthorize("hasRole('USER')")
 	@PostMapping("dislike-product/{productId}")
 	public ResponseEntity<?> dislikeProduct(@PathVariable int productId) {
 		boolean dislike = productService.dislikeProduct(productId);
@@ -97,6 +104,7 @@ public class ProductsController {
 		}
 	}
 
+	@PreAuthorize("hasRole('USER')")
 	@GetMapping("all-likedProducts")
 	public ResponseEntity<?> allLikedProduct() {
 		int UserId = 1;
@@ -108,6 +116,7 @@ public class ProductsController {
 		}
 	}
 
+	@PreAuthorize("hasRole('USER')")
 	@PostMapping("add-review")
 	public ResponseEntity<?> addReview(@RequestBody ReviewDto reviewDto) {
 		boolean review = productService.addReview(reviewDto);
@@ -118,12 +127,14 @@ public class ProductsController {
 		}
 	}
 
+	@PreAuthorize("hasAnyRole('SELLER','ADMIN')")
 	@DeleteMapping("/delete/{productId}")
 	public ResponseEntity<?> deleteProduct(@PathVariable int productId) {
 		productService.deleteProduct(productId);
 		return ResponseBuilder.withOutData("Product Deleted", HttpStatus.NO_CONTENT);
 	}
 
+	@PreAuthorize("hasAnyRole('USER','ADMIN')")
 	@GetMapping("all-user-review")
 	public ResponseEntity<?> allUserReview() {
 		int userId = 1;
@@ -135,6 +146,7 @@ public class ProductsController {
 		}
 	}
 
+	@PreAuthorize("hasAnyRole('ADMIN','USER')")
 	@GetMapping("all-review")
 	public ResponseEntity<?> allReview() {
 
