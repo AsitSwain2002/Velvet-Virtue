@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,6 +26,7 @@ public class CategoryController {
 	@Autowired
 	private CategoryService categoryService;
 
+	@PreAuthorize("hasRole('ADMIN')")
 	@PostMapping("/save-category")
 	public ResponseEntity<?> saveCategory(@RequestBody CategoryDto categoryDto) throws Exception {
 		boolean addCategory = categoryService.addCategory(categoryDto);
@@ -35,12 +37,14 @@ public class CategoryController {
 		}
 	}
 
+	@PreAuthorize("hasRole('ADMIN')")
 	@DeleteMapping("/{id}")
 	public ResponseEntity<?> delete(@PathVariable int id) {
 		categoryService.deleteCategory(id);
 		return ResponseEntity.noContent().build();
 	}
 
+	@PreAuthorize("hasRole('ADMIN')")
 	@PostMapping("/active-category/{id}")
 	public ResponseEntity<?> activeCategory(@PathVariable int id) {
 		boolean addCategory = categoryService.activecategory(id);
@@ -51,6 +55,7 @@ public class CategoryController {
 		}
 	}
 
+	@PreAuthorize("hasRole('ADMIN')")
 	@PostMapping("/remove-recycle/{id}")
 	public ResponseEntity<?> removeRecyclebin(@PathVariable int id) {
 		boolean addCategory = categoryService.removeRecycleBin(id);
@@ -61,6 +66,7 @@ public class CategoryController {
 		}
 	}
 
+	@PreAuthorize("hasRole('ADMIN')")
 	@GetMapping("all-category")
 	public ResponseEntity<?> allCategory() {
 		List<CategoryDto> allCategory = categoryService.getAllCategory();
