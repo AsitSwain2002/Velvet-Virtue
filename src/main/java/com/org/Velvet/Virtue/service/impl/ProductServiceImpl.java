@@ -40,6 +40,7 @@ import com.org.Velvet.Virtue.Repo.ProductRepo;
 import com.org.Velvet.Virtue.Repo.ProductTypeRepo;
 import com.org.Velvet.Virtue.Repo.ReviewRepo;
 import com.org.Velvet.Virtue.Repo.UsersRepo;
+import com.org.Velvet.Virtue.Util.CommonUtil;
 import com.org.Velvet.Virtue.service.CategoryService;
 import com.org.Velvet.Virtue.service.ProductService;
 import com.org.Velvet.Virtue.validation.ProductValidation;
@@ -80,7 +81,7 @@ public class ProductServiceImpl implements ProductService {
 		ProductsDto productDto = ob.readValue(reqProd, ProductsDto.class);
 		// validation code
 		productValidation.validate(productDto);
-		int userid = 1;
+		int userId = CommonUtil.getLoggedUser().getId();
 		Products products = mapper.map(productDto, Products.class);
 
 		// update category
@@ -106,7 +107,7 @@ public class ProductServiceImpl implements ProductService {
 			}
 
 			// set created by
-			products.setCreatedBy(userid);
+			products.setCreatedBy(userId);
 			products.setCreatedOn(new Date());
 			Products save = productRepo.save(products);
 			if (!ObjectUtils.isEmpty(save)) {
@@ -245,7 +246,7 @@ public class ProductServiceImpl implements ProductService {
 	// liked product logic
 	@Override
 	public boolean likeProduct(int id) {
-		int userId = 1;
+		int userId = CommonUtil.getLoggedUser().getId();
 		Products dbProducts = productRepo.findById(id)
 				.orElseThrow(() -> new ResourceNotFoundException("Product Not found"));
 		Users users = usersRepo.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User not found"));
@@ -267,7 +268,7 @@ public class ProductServiceImpl implements ProductService {
 
 	@Override
 	public boolean dislikeProduct(int id) {
-		int userId = 1;
+		int userId = CommonUtil.getLoggedUser().getId();
 		Products dbProducts = productRepo.findById(id)
 				.orElseThrow(() -> new ResourceNotFoundException("Product Not found"));
 

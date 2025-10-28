@@ -16,6 +16,7 @@ import com.org.Velvet.Virtue.Model.Users;
 import com.org.Velvet.Virtue.Repo.CartRepo;
 import com.org.Velvet.Virtue.Repo.ProductRepo;
 import com.org.Velvet.Virtue.Repo.UsersRepo;
+import com.org.Velvet.Virtue.Util.CommonUtil;
 import com.org.Velvet.Virtue.service.CartService;
 
 @Service
@@ -34,7 +35,7 @@ public class CartServiceImpl implements CartService {
 
 	@Override
 	public boolean addToCart(CartDto cartDto) {
-		int userId = 1;
+		int userId = CommonUtil.getLoggedUser().getId();
 		Cart cart = mapper.map(cartDto, Cart.class);
 		if (cartDto.getId() != 0) {
 			updateCart(cart, cartDto);
