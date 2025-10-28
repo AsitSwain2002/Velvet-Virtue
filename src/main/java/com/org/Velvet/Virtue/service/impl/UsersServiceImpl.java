@@ -64,7 +64,6 @@ public class UsersServiceImpl implements UsersService {
 		setAddress(user);
 		if (!ObjectUtils.isEmpty(usersRepo.save(user))) {
 			sentEmail(user, reqUrl);
-			System.out.println("Mail Sent");
 			return true;
 		}
 		return false;
@@ -72,9 +71,9 @@ public class UsersServiceImpl implements UsersService {
 
 	private void sentEmail(Users user, String reqUrl) throws MessagingException {
 
-		String message = "Hi, <b> [[userName]] </b> <br><br>" + "Your Account Created Sucessfully"
+		String message = "Hi, <b> [[userName]] </b> <br><br>" + "Your Account Created Successfully"
 				+ "<br>Click the below link to account verify <br>" + "<a href='[[url]]'>Click here</a> <br><br>"
-				+ "If it not you please ignore it" + "<br>" + "Thanks, <br>" + "VelvelVirtue team";
+				+ "If it not you please ignore it" + "<br>" + "Thanks, <br>" + "VelvetVirtue team";
 		message = message.replace("[[userName]]", user.getFirstName());
 		message = message.replace("[[url]]",
 				reqUrl + "/api/v1/user/verify?uId=" + user.getId() + "&Vcode=" + user.getUserVerification().getVCode());
