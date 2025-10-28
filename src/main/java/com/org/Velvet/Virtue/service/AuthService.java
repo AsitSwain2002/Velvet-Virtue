@@ -5,4 +5,6 @@ import com.org.Velvet.Virtue.Dto.ResponseDto;
 
 public interface AuthService {
 	ResponseDto login(RequestDto requestDto);
+
+	boolean verify(int uId, String vCode);
 }

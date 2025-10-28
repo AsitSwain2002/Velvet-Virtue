@@ -5,8 +5,10 @@ import java.util.List;
 
 import com.org.Velvet.Virtue.Dto.UsersDto;
 
+import jakarta.mail.MessagingException;
+
 public interface UsersService {
-	boolean saveUser(UsersDto usersDto);
+	boolean saveUser(UsersDto usersDto, String url) throws MessagingException;
 
 	UsersDto findById(Integer id);
 

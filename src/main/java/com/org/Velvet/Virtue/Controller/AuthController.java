@@ -3,9 +3,11 @@ package com.org.Velvet.Virtue.Controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.org.Velvet.Virtue.Dto.RequestDto;
@@ -22,7 +24,7 @@ public class AuthController {
 
 	@PostMapping("/login")
 	public ResponseEntity<?> login(@RequestBody RequestDto requestDto) {
-		
+
 		ResponseDto login = authService.login(requestDto);
 		if (login != null) {
 			return ResponseBuilder.withData("Login Successful", login, HttpStatus.OK);
@@ -30,5 +32,15 @@ public class AuthController {
 			return ResponseBuilder.withOutData("Invalid Credintial", HttpStatus.NOT_FOUND);
 		}
 
+	}
+
+	@GetMapping("/verify")
+	public ResponseEntity<?> verify(@RequestParam int uId, @RequestParam String Vcode) {
+		boolean verify = authService.verify(uId, Vcode);
+		if (verify) {
+			return ResponseBuilder.withOutData("Verification Successful", HttpStatus.OK);
+		} else {
+			return ResponseBuilder.withOutData("Invalid Verification Link", HttpStatus.INTERNAL_SERVER_ERROR);
+		}
 	}
 }
