@@ -13,6 +13,7 @@ import com.org.Velvet.Virtue.Dto.CategoryDto;
 import com.org.Velvet.Virtue.ExceptionHandler.ResourceNotFoundException;
 import com.org.Velvet.Virtue.Model.Category;
 import com.org.Velvet.Virtue.Repo.CategoryRepo;
+import com.org.Velvet.Virtue.Util.CommonUtil;
 import com.org.Velvet.Virtue.service.CategoryService;
 import com.org.Velvet.Virtue.validation.CategoryValidation;
 
@@ -30,7 +31,7 @@ public class CategoryServiceImpl implements CategoryService {
 
 	@Override
 	public boolean addCategory(CategoryDto categorydto) throws Exception {
-		int userId = 1;
+		int userId = CommonUtil.getLoggedUser().getId();
 
 		// Category Validation Here
 		categoryValidation.validateCategory(categorydto);

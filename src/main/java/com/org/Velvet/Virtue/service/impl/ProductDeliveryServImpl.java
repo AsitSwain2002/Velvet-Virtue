@@ -25,6 +25,7 @@ import com.org.Velvet.Virtue.Model.Users;
 import com.org.Velvet.Virtue.Repo.ProductDeliveryRepo;
 import com.org.Velvet.Virtue.Repo.ProductRepo;
 import com.org.Velvet.Virtue.Repo.StatusRepo;
+import com.org.Velvet.Virtue.Util.CommonUtil;
 import com.org.Velvet.Virtue.service.CartService;
 import com.org.Velvet.Virtue.service.ProductDeliveryService;
 import com.org.Velvet.Virtue.service.UsersService;
@@ -52,7 +53,7 @@ public class ProductDeliveryServImpl implements ProductDeliveryService {
 
 	@Override
 	public boolean saveDelivery(ProductDeliveryDto deliveryDto) {
-		int userId = 1;
+		int userId = CommonUtil.getLoggedUser().getId();
 		boolean res = false;
 		List<CartDto> collect = cartService.findAllCart(userId);
 
@@ -116,8 +117,8 @@ public class ProductDeliveryServImpl implements ProductDeliveryService {
 	}
 
 	private void setStatus(ProductDelivery order) {
-		int ststusId = 1;
-		OrderStatus orderStatus = statusRepo.findById(ststusId)
+		int statusId = 1;
+		OrderStatus orderStatus = statusRepo.findById(statusId)
 				.orElseThrow(() -> new ResourceNotFoundException(" Order Status is Invalid"));
 		order.setOrderStatus(orderStatus);
 	}

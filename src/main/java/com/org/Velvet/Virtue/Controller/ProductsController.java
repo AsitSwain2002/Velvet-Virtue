@@ -23,6 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.org.Velvet.Virtue.Dto.ProductTypeDto;
 import com.org.Velvet.Virtue.Dto.ProductsDto;
 import com.org.Velvet.Virtue.Dto.ReviewDto;
+import com.org.Velvet.Virtue.Util.CommonUtil;
 import com.org.Velvet.Virtue.Util.ResponseBuilder;
 import com.org.Velvet.Virtue.service.ProductService;
 import com.org.Velvet.Virtue.service.ProductTypeService;
@@ -107,8 +108,8 @@ public class ProductsController {
 	@PreAuthorize("hasRole('USER')")
 	@GetMapping("all-likedProducts")
 	public ResponseEntity<?> allLikedProduct() {
-		int UserId = 1;
-		List<ProductsDto> allLikedProduct = productService.allLikedProduct(UserId);
+		int userId = CommonUtil.getLoggedUser().getId();
+		List<ProductsDto> allLikedProduct = productService.allLikedProduct(userId);
 		if (!CollectionUtils.isEmpty(allLikedProduct)) {
 			return ResponseBuilder.withData("Fetched Successfully", allLikedProduct, HttpStatus.OK);
 		} else {

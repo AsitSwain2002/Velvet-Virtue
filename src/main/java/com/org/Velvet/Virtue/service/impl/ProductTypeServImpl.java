@@ -12,6 +12,7 @@ import com.org.Velvet.Virtue.ExceptionHandler.ProductTypeValidationException;
 import com.org.Velvet.Virtue.ExceptionHandler.ResourceNotFoundException;
 import com.org.Velvet.Virtue.Model.ProductType;
 import com.org.Velvet.Virtue.Repo.ProductTypeRepo;
+import com.org.Velvet.Virtue.Util.CommonUtil;
 import com.org.Velvet.Virtue.service.ProductTypeService;
 
 @Service
@@ -25,12 +26,12 @@ public class ProductTypeServImpl implements ProductTypeService {
 
 	@Override
 	public boolean saveType(ProductTypeDto productTypeDto) {
-		
+
 		String name = productTypeDto.getType();
-		if(productTypeRepo.existsByType(name)) {
+		if (productTypeRepo.existsByType(name)) {
 			throw new ProductTypeValidationException("Product Type Already Present");
 		}
-		int userId = 1;
+		int userId = CommonUtil.getLoggedUser().getId();
 		ProductType type = mapper.map(productTypeDto, ProductType.class);
 		if (type.getId() != 0) {
 			updateType(type);
@@ -45,7 +46,7 @@ public class ProductTypeServImpl implements ProductTypeService {
 	}
 
 	private void updateType(ProductType type) {
-		int userId = 1;
+		int userId = CommonUtil.getLoggedUser().getId();
 		ProductType dbtype = productTypeRepo.findById(type.getId())
 				.orElseThrow(() -> new ResourceNotFoundException("Type Not Found"));
 		dbtype.setUpdateBy(userId);

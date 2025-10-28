@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.org.Velvet.Virtue.Dto.AddressDto;
 import com.org.Velvet.Virtue.Dto.ProductDeliveryDto;
+import com.org.Velvet.Virtue.Util.CommonUtil;
 import com.org.Velvet.Virtue.Util.ResponseBuilder;
 import com.org.Velvet.Virtue.service.ProductDeliveryService;
 
@@ -72,7 +73,7 @@ public class ProductDeliveryController {
 	@GetMapping("delivery-history")
 	public ResponseEntity<?> deliveryHistory() {
 		// change later
-		int userId = 1;
+		int userId = CommonUtil.getLoggedUser().getId();
 		List<ProductDeliveryDto> deliveryHistory = deliveryService.getDeliveryHistory(userId);
 		if (!CollectionUtils.isEmpty(deliveryHistory)) {
 			return ResponseBuilder.withData("fetched", deliveryHistory, HttpStatus.OK);
@@ -80,6 +81,7 @@ public class ProductDeliveryController {
 			return ResponseBuilder.withOutData("Nothing Found", HttpStatus.NOT_FOUND);
 		}
 	}
+
 	@PreAuthorize("hasRole('USER')")
 	@PutMapping("update-address/{deliveryId}")
 	public ResponseEntity<?> updateAddress(@PathVariable int deliveryId, @RequestBody AddressDto addressDto) {
