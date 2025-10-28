@@ -1,6 +1,7 @@
 package com.org.Velvet.Virtue.service.impl;
 
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
@@ -9,16 +10,22 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
+import com.org.Velvet.Virtue.Dto.MailData;
 import com.org.Velvet.Virtue.Dto.UsersDto;
 import com.org.Velvet.Virtue.ExceptionHandler.ResourceNotFoundException;
 import com.org.Velvet.Virtue.Model.Address;
 import com.org.Velvet.Virtue.Model.Roles;
+import com.org.Velvet.Virtue.Model.UserVerification;
 import com.org.Velvet.Virtue.Model.Users;
 import com.org.Velvet.Virtue.Repo.AddressRepo;
 import com.org.Velvet.Virtue.Repo.RolesRepo;
 import com.org.Velvet.Virtue.Repo.UsersRepo;
+import com.org.Velvet.Virtue.Util.MailService;
 import com.org.Velvet.Virtue.service.UsersService;
 import com.org.Velvet.Virtue.validation.UserValidation;
+
+import jakarta.mail.MessagingException;
+import jakarta.servlet.http.HttpServletRequest;
 
 @Service
 public class UsersServiceImpl implements UsersService {
@@ -35,9 +42,11 @@ public class UsersServiceImpl implements UsersService {
 	private UserValidation userValidation;
 	@Autowired
 	private BCryptPasswordEncoder encoder;
+	@Autowired
+	private MailService mailService;
 
 	@Override
-	public boolean saveUser(UsersDto usersDto) {
+	public boolean saveUser(UsersDto usersDto, String reqUrl) throws MessagingException {
 		// --------- validate user -------
 		userValidation.validateUser(usersDto);
 		Users user = mapper.map(usersDto, Users.class);
@@ -47,13 +56,33 @@ public class UsersServiceImpl implements UsersService {
 			// point
 			updateUser(user);
 		}
+		UserVerification userVerification = UserVerification.builder().isActive(false)
+				.vCode(UUID.randomUUID().toString()).users(user).build();
+		user.setUserVerification(userVerification);
 		setPassword(user);
 		setRole(user.getRoles(), user);
 		setAddress(user);
 		if (!ObjectUtils.isEmpty(usersRepo.save(user))) {
+			sentEmail(user, reqUrl);
+			System.out.println("Mail Sent");
 			return true;
 		}
 		return false;
+	}
+
+	private void sentEmail(Users user, String reqUrl) throws MessagingException {
+
+		String message = "Hi, <b> [[userName]] </b> <br><br>" + "Your Account Created Sucessfully"
+				+ "<br>Click the below link to account verify <br>" + "<a href='[[url]]'>Click here</a> <br><br>"
+				+ "If it not you please ignore it" + "<br>" + "Thanks, <br>" + "VelvelVirtue team";
+		message = message.replace("[[userName]]", user.getFirstName());
+		message = message.replace("[[url]]",
+				reqUrl + "/api/v1/user/verify?uId=" + user.getId() + "&Vcode=" + user.getUserVerification().getVCode());
+
+		MailData data = MailData.builder().title("Account Create Confirmation").subject("Account Creation Sucessfull")
+				.to(user.getEmail()).message(message).build();
+		mailService.send(data);
+
 	}
 
 	private void setPassword(Users user) {

@@ -9,8 +9,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.org.Velvet.Virtue.Dto.UsersDto;
+import com.org.Velvet.Virtue.Util.CommonUtil;
 import com.org.Velvet.Virtue.Util.ResponseBuilder;
 import com.org.Velvet.Virtue.service.UsersService;
+
+import jakarta.mail.MessagingException;
+import jakarta.servlet.http.HttpServletRequest;
 
 @RestController
 @RequestMapping("api/v1/user")
@@ -19,11 +23,14 @@ public class UserController {
 	private UsersService userService;
 
 	@PostMapping("/save-user")
-	public ResponseEntity<?> saveUser(@RequestBody UsersDto usersDto) {
-		boolean saveUser = userService.saveUser(usersDto);
+	public ResponseEntity<?> saveUser(@RequestBody UsersDto usersDto, HttpServletRequest req)
+			throws MessagingException {
+		String url = CommonUtil.getUrl(req);
+		boolean saveUser = userService.saveUser(usersDto, url);
 		if (saveUser) {
 			return ResponseBuilder.withOutData("Saved Successfully", HttpStatus.OK);
 		}
 		return ResponseBuilder.withOutData("Internal Server Error", HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 }
+ 

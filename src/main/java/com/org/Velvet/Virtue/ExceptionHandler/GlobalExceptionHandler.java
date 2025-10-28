@@ -58,4 +58,9 @@ public class GlobalExceptionHandler {
 		return ResponseBuilder.exceptionDetails(ex.getMessage(), ex.getError(), HttpStatus.BAD_REQUEST);
 	}
 
+	@ExceptionHandler(AlreadyVerifiedException.class)
+	public static ResponseEntity<?> alreadyVerified(AlreadyVerifiedException ex) {
+		return ResponseBuilder.withOutData(ex.getMessage(), HttpStatus.BAD_REQUEST);
+	}
+
 }

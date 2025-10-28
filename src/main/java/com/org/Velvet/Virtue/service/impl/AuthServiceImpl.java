@@ -10,6 +10,9 @@ import org.springframework.stereotype.Service;
 import com.org.Velvet.Virtue.Dto.RequestDto;
 import com.org.Velvet.Virtue.Dto.ResponseDto;
 import com.org.Velvet.Virtue.Dto.UsersDto;
+import com.org.Velvet.Virtue.ExceptionHandler.AlreadyVerifiedException;
+import com.org.Velvet.Virtue.ExceptionHandler.ResourceNotFoundException;
+import com.org.Velvet.Virtue.Model.UserVerification;
 import com.org.Velvet.Virtue.Model.Users;
 import com.org.Velvet.Virtue.Repo.UsersRepo;
 import com.org.Velvet.Virtue.service.AuthService;
@@ -39,9 +42,26 @@ public class AuthServiceImpl implements AuthService {
 			ResponseDto responseDto = new ResponseDto();
 			responseDto.setUser(mapper.map(user, UsersDto.class));
 			responseDto.setToken(jwtService.generateTooken(user));
-			return responseDto; 	
+			return responseDto;
 		}
 		return null;
+	}
+
+	@Override
+	public boolean verify(int uId, String vCode) {
+		Users user = usersRepo.findById(uId).orElseThrow(() -> new ResourceNotFoundException("User Not Found"));
+
+		if (user.getUserVerification().getVCode() == null) {
+			throw new AlreadyVerifiedException("Link Expaired");
+		}
+		if (user.getUserVerification().getVCode().equals(vCode)) {
+			UserVerification userVerification = user.getUserVerification();
+			userVerification.setActive(true);
+			userVerification.setVCode(null);
+			usersRepo.save(user);
+			return true;
+		}
+		return false;
 	}
 
 }
