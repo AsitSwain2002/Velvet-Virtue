@@ -63,4 +63,9 @@ public class GlobalExceptionHandler {
 		return ResponseBuilder.withOutData(ex.getMessage(), HttpStatus.BAD_REQUEST);
 	}
 
+	@ExceptionHandler(AccountNotActivated.class)
+	public static ResponseEntity<?> accountNotActivated(AccountNotActivated ex) {
+		return ResponseBuilder.withOutData(ex.getMessage(), HttpStatus.BAD_REQUEST);
+	}
+
 }

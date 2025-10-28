@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import com.org.Velvet.Virtue.Dto.RequestDto;
 import com.org.Velvet.Virtue.Dto.ResponseDto;
 import com.org.Velvet.Virtue.Dto.UsersDto;
+import com.org.Velvet.Virtue.ExceptionHandler.AccountNotActivated;
 import com.org.Velvet.Virtue.ExceptionHandler.AlreadyVerifiedException;
 import com.org.Velvet.Virtue.ExceptionHandler.ResourceNotFoundException;
 import com.org.Velvet.Virtue.Model.UserVerification;
@@ -34,7 +35,9 @@ public class AuthServiceImpl implements AuthService {
 	public ResponseDto login(RequestDto requestDto) {
 
 		Users user = usersRepo.findByEmail(requestDto.getUserName());
-
+		if (!user.getUserVerification().isActive()) {
+			throw new AccountNotActivated("Account is Not Active | Please Active then login");
+		}
 		Authentication authenticate = authenticationManager.authenticate(
 				new UsernamePasswordAuthenticationToken(requestDto.getUserName(), requestDto.getPassword()));
 
