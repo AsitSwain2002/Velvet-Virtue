@@ -84,7 +84,7 @@ public class ProductServiceImpl implements ProductService {
 		int userId = CommonUtil.getLoggedUser().getId();
 		Products products = mapper.map(productDto, Products.class);
 
-		// update category
+		// update product
 		if (products.getId() != null) {
 			return updateProducts(products);
 		} else {

@@ -30,7 +30,7 @@ import com.org.Velvet.Virtue.service.ProductTypeService;
 
 @RestController
 @RequestMapping("/api/v1/products")
-public class ProductsController {
+public class ProductsController { 
 
 	@Autowired
 	private ProductService productService;
