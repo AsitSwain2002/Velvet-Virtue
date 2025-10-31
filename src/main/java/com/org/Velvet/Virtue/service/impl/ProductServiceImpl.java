@@ -178,7 +178,7 @@ public class ProductServiceImpl implements ProductService {
 	}
 
 	private boolean updateProducts(Products products) {
-		int userid = 1;
+		int userid = CommonUtil.getLoggedUser().getId();
 
 		Products dbProducts = productRepo.findById(products.getId())
 				.orElseThrow(() -> new ResourceNotFoundException("Product Not found"));
@@ -227,6 +227,7 @@ public class ProductServiceImpl implements ProductService {
 		Products dbProducts = productRepo.findById(id)
 				.orElseThrow(() -> new ResourceNotFoundException("Product Not found"));
 		dbProducts.setDeleted(true);
+		dbProducts.setDeletedOn(new Date());
 		productRepo.save(dbProducts);
 
 	}
