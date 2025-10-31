@@ -1,5 +1,6 @@
 package com.org.Velvet.Virtue.Repo;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -15,5 +16,7 @@ public interface ProductRepo extends JpaRepository<Products, Integer> {
 	List<Products> findByNameContaining(String name);
 
 	boolean existsByName(String pName);
+
+	List<Products> findAllByDeletedAndDeletedOnBefore(boolean b, LocalDateTime minusDays);
 
 }

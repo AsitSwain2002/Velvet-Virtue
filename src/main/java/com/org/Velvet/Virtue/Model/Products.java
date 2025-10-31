@@ -1,5 +1,6 @@
 package com.org.Velvet.Virtue.Model;
 
+import java.util.Date;
 import java.util.List;
 
 import jakarta.persistence.CascadeType;
@@ -13,6 +14,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -32,6 +34,7 @@ public class Products extends SuperClass {
 	private Integer quantity;
 	private boolean active;
 	private boolean deleted;
+	private Date deletedOn;
 	private double price;
 	private int discount;
 	private double priceAfterDiscount;
