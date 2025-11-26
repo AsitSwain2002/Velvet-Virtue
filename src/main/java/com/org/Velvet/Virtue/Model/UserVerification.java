@@ -1,5 +1,8 @@
 package com.org.Velvet.Virtue.Model;
 
+import java.time.LocalDateTime;
+import java.util.Date;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -25,6 +28,7 @@ public class UserVerification {
 	private int id;
 	private String vCode;
 	private boolean isActive;
+	private LocalDateTime createdOn;
 	@OneToOne
 	private Users users;
 

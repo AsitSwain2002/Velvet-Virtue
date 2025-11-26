@@ -1,5 +1,6 @@
 package com.org.Velvet.Virtue.service.impl;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -13,7 +14,6 @@ import org.springframework.util.ObjectUtils;
 import com.org.Velvet.Virtue.Dto.MailData;
 import com.org.Velvet.Virtue.Dto.UsersDto;
 import com.org.Velvet.Virtue.ExceptionHandler.ResourceNotFoundException;
-import com.org.Velvet.Virtue.Model.Address;
 import com.org.Velvet.Virtue.Model.Roles;
 import com.org.Velvet.Virtue.Model.UserVerification;
 import com.org.Velvet.Virtue.Model.Users;
@@ -25,7 +25,6 @@ import com.org.Velvet.Virtue.service.UsersService;
 import com.org.Velvet.Virtue.validation.UserValidation;
 
 import jakarta.mail.MessagingException;
-import jakarta.servlet.http.HttpServletRequest;
 
 @Service
 public class UsersServiceImpl implements UsersService {
@@ -56,7 +55,7 @@ public class UsersServiceImpl implements UsersService {
 			// point
 			updateUser(user);
 		}
-		UserVerification userVerification = UserVerification.builder().isActive(false)
+		UserVerification userVerification = UserVerification.builder().isActive(false).createdOn(LocalDateTime.now())
 				.vCode(UUID.randomUUID().toString()).users(user).build();
 		user.setUserVerification(userVerification);
 		setPassword(user);
