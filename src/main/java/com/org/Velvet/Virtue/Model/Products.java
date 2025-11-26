@@ -1,5 +1,6 @@
 package com.org.Velvet.Virtue.Model;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 
@@ -34,7 +35,7 @@ public class Products extends SuperClass {
 	private Integer quantity;
 	private boolean active;
 	private boolean deleted;
-	private Date deletedOn;
+	private LocalDateTime deletedOn;
 	private double price;
 	private int discount;
 	private double priceAfterDiscount;
