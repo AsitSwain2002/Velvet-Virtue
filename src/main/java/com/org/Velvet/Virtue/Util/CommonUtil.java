@@ -1,3 +1,4 @@
+
 package com.org.Velvet.Virtue.Util;
 
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -18,7 +19,7 @@ public class CommonUtil {
 
 	public static Users getLoggedUser() {
 		try {
-			UserDetl udtl = (UserDetl) SecurityContextHolder.getContext().getAuthentication();
+			UserDetl udtl = (UserDetl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 			return udtl.getUsers();
 		} catch (Exception e) {
 			throw e;

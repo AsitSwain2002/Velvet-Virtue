@@ -1,0 +1,51 @@
+package com.org.Velvet.Virtue.Controller;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.util.CollectionUtils;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.org.Velvet.Virtue.Dto.ProductsDto;
+import com.org.Velvet.Virtue.Util.ResponseBuilder;
+import com.org.Velvet.Virtue.service.WishlistService;
+
+@RestController
+@RequestMapping("/api/v1/wishlist")
+public class WishlistController {
+	@Autowired
+	private WishlistService wishlistService;
+
+	@PostMapping("/add/{productId}")
+	public ResponseEntity<?> addToWatchList(@PathVariable int productId) {
+		boolean toWishList = wishlistService.addToWishList(productId);
+		if (toWishList) {
+			return ResponseBuilder.withOutData("Added to WishList", HttpStatus.OK);
+		} else {
+			return ResponseBuilder.withOutData("something went wrong", HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+
+	@GetMapping("/allWishlistProduct")
+	public ResponseEntity<?> allWishListProduct() {
+		List<ProductsDto> allWishlistproduct = wishlistService.allWishlistproduct();
+		if (!CollectionUtils.isEmpty(allWishlistproduct)) {
+			return ResponseBuilder.withData("Fetched Successfully", allWishlistproduct, HttpStatus.OK);
+		} else {
+			return ResponseBuilder.withOutData("No wishlist product found", HttpStatus.OK);
+		}
+	}
+
+	@GetMapping("/removeWishList/{productId}")
+	public ResponseEntity<?> removeWishlist(@PathVariable int productId) {
+		wishlistService.removeWishList(productId);
+
+		return ResponseBuilder.withOutData("Remove from wishlist", HttpStatus.NO_CONTENT);
+	}
+}
