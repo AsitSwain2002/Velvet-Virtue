@@ -1,3 +1,4 @@
+
 package com.org.Velvet.Virtue.ExceptionHandler;
 
 import java.time.LocalDateTime;
@@ -71,5 +72,4 @@ public class GlobalExceptionHandler {
 	public static ResponseEntity<?> classCatException(ClassCastException ex) {
 		return ResponseBuilder.withOutData(ex.getMessage(), HttpStatus.BAD_REQUEST);
 	}
-
 }

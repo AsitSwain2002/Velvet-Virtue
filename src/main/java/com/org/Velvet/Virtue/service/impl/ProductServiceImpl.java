@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -227,7 +228,7 @@ public class ProductServiceImpl implements ProductService {
 		Products dbProducts = productRepo.findById(id)
 				.orElseThrow(() -> new ResourceNotFoundException("Product Not found"));
 		dbProducts.setDeleted(true);
-		dbProducts.setDeletedOn(new Date());
+		dbProducts.setDeletedOn(LocalDateTime.now());
 		productRepo.save(dbProducts);
 
 	}
