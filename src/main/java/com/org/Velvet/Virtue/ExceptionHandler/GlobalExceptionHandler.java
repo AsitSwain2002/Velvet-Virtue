@@ -67,5 +67,9 @@ public class GlobalExceptionHandler {
 	public static ResponseEntity<?> accountNotActivated(AccountNotActivated ex) {
 		return ResponseBuilder.withOutData(ex.getMessage(), HttpStatus.BAD_REQUEST);
 	}
+	@ExceptionHandler(ClassCastException.class)
+	public static ResponseEntity<?> classCatException(ClassCastException ex) {
+		return ResponseBuilder.withOutData(ex.getMessage(), HttpStatus.BAD_REQUEST);
+	}
 
 }
