@@ -31,5 +31,7 @@ public interface ProductService {
 	List<ReviewDto> allReviewByUser(int userId);
 
 	List<ReviewDto> allReviews();
+	
+	ProductsDto findByProductId(int priductId);
 
 }
