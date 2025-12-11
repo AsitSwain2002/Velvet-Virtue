@@ -370,4 +370,11 @@ public class ProductServiceImpl implements ProductService {
 		return reviews.stream().map(e -> mapper.map(e, ReviewDto.class)).collect(Collectors.toList());
 	}
 
+	@Override
+	public ProductsDto findByProductId(int productId) {
+		Products product = productRepo.findById(productId)
+				.orElseThrow(() -> new ResourceNotFoundException("Product Not Found"));
+		return mapper.map(product, ProductsDto.class);
+	}
+
 }

@@ -30,7 +30,7 @@ import com.org.Velvet.Virtue.service.ProductTypeService;
 
 @RestController
 @RequestMapping("/api/v1/products")
-public class ProductsController { 
+public class ProductsController {
 
 	@Autowired
 	private ProductService productService;
@@ -143,7 +143,7 @@ public class ProductsController {
 		if (!CollectionUtils.isEmpty(allReviewByUser)) {
 			return ResponseBuilder.withData("Fetched Successfully", allReviewByUser, HttpStatus.OK);
 		} else {
-			return ResponseBuilder.withOutData("No Liked Product Found", HttpStatus.NOT_FOUND);
+			return ResponseBuilder.withOutData("No Review Found", HttpStatus.OK);
 		}
 	}
 
@@ -155,7 +155,18 @@ public class ProductsController {
 		if (!CollectionUtils.isEmpty(allReview)) {
 			return ResponseBuilder.withData("Fetched Successfully", allReview, HttpStatus.OK);
 		} else {
-			return ResponseBuilder.withOutData("No Liked Product Found", HttpStatus.NOT_FOUND);
+			return ResponseBuilder.withOutData("No Review Found", HttpStatus.OK);
+		}
+	}
+
+	@PreAuthorize("hasAnyRole('ADMIN','USER','SELLER')")
+	@GetMapping("/{id}")
+	public ResponseEntity<?> findById(@PathVariable int id) {
+		ProductsDto product = productService.findByProductId(id);
+		if (!ObjectUtils.isEmpty(product)) {
+			return ResponseBuilder.withData("Fetched Successfully", product, HttpStatus.OK);
+		} else {
+			return ResponseBuilder.withOutData("No Product Found", HttpStatus.OK);
 		}
 	}
 
