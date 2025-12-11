@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,6 +23,7 @@ public class WishlistController {
 	@Autowired
 	private WishlistService wishlistService;
 
+	@PreAuthorize("hasRole('USER')")
 	@PostMapping("/add/{productId}")
 	public ResponseEntity<?> addToWatchList(@PathVariable int productId) {
 		boolean toWishList = wishlistService.addToWishList(productId);
@@ -32,6 +34,7 @@ public class WishlistController {
 		}
 	}
 
+	@PreAuthorize("hasRole('USER')")
 	@GetMapping("/allWishlistProduct")
 	public ResponseEntity<?> allWishListProduct() {
 		List<ProductsDto> allWishlistproduct = wishlistService.allWishlistproduct();
@@ -41,7 +44,7 @@ public class WishlistController {
 			return ResponseBuilder.withOutData("No wishlist product found", HttpStatus.OK);
 		}
 	}
-
+	@PreAuthorize("hasRole('USER')")
 	@GetMapping("/removeWishList/{productId}")
 	public ResponseEntity<?> removeWishlist(@PathVariable int productId) {
 		wishlistService.removeWishList(productId);
