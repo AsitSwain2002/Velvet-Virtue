@@ -16,6 +16,9 @@ import org.apache.commons.io.FilenameUtils;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
@@ -23,8 +26,10 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.org.Velvet.Virtue.Dto.CategoryDto;
+import com.org.Velvet.Virtue.Dto.ProductResponse;
 import com.org.Velvet.Virtue.Dto.ProductsDto;
 import com.org.Velvet.Virtue.Dto.ReviewDto;
+import com.org.Velvet.Virtue.Dto.ReviewResponse;
 import com.org.Velvet.Virtue.ExceptionHandler.ResourceNotFoundException;
 import com.org.Velvet.Virtue.ExceptionHandler.ReviewNotAllowedException;
 import com.org.Velvet.Virtue.Model.Category;
@@ -110,6 +115,7 @@ public class ProductServiceImpl implements ProductService {
 			// set created by
 			products.setCreatedBy(userId);
 			products.setCreatedOn(new Date());
+			products.setActive(true);
 			Products save = productRepo.save(products);
 			if (!ObjectUtils.isEmpty(save)) {
 				return true;
@@ -234,9 +240,14 @@ public class ProductServiceImpl implements ProductService {
 	}
 
 	@Override
-	public List<ProductsDto> allProduct() {
-		List<Products> products = productRepo.findAllByDeletedFalseAndActiveTrue();
-		return products.stream().map(e -> mapper.map(e, ProductsDto.class)).collect(Collectors.toList());
+	public ProductResponse allProduct(int pageNum, int pagSize) {
+		Pageable page = PageRequest.of(pageNum, pagSize);
+		Page<Products> products = productRepo.findAllByDeletedFalseAndActiveTrue(page);
+		List<ProductsDto> productDto = products.stream().map(e -> mapper.map(e, ProductsDto.class))
+				.collect(Collectors.toList());
+		return ProductResponse.builder().productsDtos(productDto).totalPage(products.getTotalPages())
+				.pageNumber(products.getNumber()).pagesize(products.getSize()).isLastPage(products.isLast())
+				.isfirstPage(products.isFirst()).totalElement(products.getTotalElements()).build();
 	}
 
 	@Override
@@ -286,15 +297,21 @@ public class ProductServiceImpl implements ProductService {
 	}
 
 	@Override
-	public List<ProductsDto> allLikedProduct(int userId) {
+	public ProductResponse allLikedProduct(int userId, int pageNum, int pagSize) {
 		Users users = usersRepo.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User not found"));
-		List<LikedProduct> likedProducts = likedProductRepo.findAllByUsers(users);
+		Pageable of = PageRequest.of(pageNum, pagSize);
+		Page<LikedProduct> likedProducts = likedProductRepo.findByUsers(users, of);
 		// find product from likedProduct
-		List<Products> products = likedProducts.stream().map(e -> e.getProducts()).collect(Collectors.toList());
-		return products.stream().map(e -> mapper.map(e, ProductsDto.class)).collect(Collectors.toList());
+		List<Products> likedProduct = likedProducts.stream().map(e -> e.getProducts()).collect(Collectors.toList());
+		List<ProductsDto> productsDto = likedProducts.stream().map(e -> mapper.map(e, ProductsDto.class))
+				.collect(Collectors.toList());
+		return ProductResponse.builder().productsDtos(productsDto).totalPage(likedProducts.getTotalPages())
+				.pageNumber(likedProducts.getNumber()).pagesize(likedProducts.getSize())
+				.isLastPage(likedProducts.isLast()).isfirstPage(likedProducts.isFirst())
+				.totalElement(likedProducts.getTotalElements()).build();
 	}
 
-	// add review logic written here
+	// add review logic written heres
 	@Override
 	public boolean addReview(ReviewDto reviewDto) {
 		Review review = mapper.map(reviewDto, Review.class);
@@ -357,17 +374,26 @@ public class ProductServiceImpl implements ProductService {
 	}
 
 	@Override
-	public List<ReviewDto> allReviewByUser(int userId) {
+	public ReviewResponse allReviewByUser(int userId, int pageNum, int pagSize) {
 		Users users = usersRepo.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User not found"));
-
-		List<Review> reviews = reviewRepo.findAllByUserAndDeleted(users, false);
-		return reviews.stream().map(e -> mapper.map(e, ReviewDto.class)).collect(Collectors.toList());
+		Pageable of = PageRequest.of(pageNum, pagSize);
+		Page<Review> reviews = reviewRepo.findAllByUserAndDeleted(users, false, of);
+		List<ReviewDto> reviewsDto = reviews.stream().map(e -> mapper.map(e, ReviewDto.class))
+				.collect(Collectors.toList());
+		return ReviewResponse.builder().reviewDto(reviewsDto).totalPage(reviews.getTotalPages())
+				.pageNumber(reviews.getNumber()).pagesize(reviews.getSize()).isLastPage(reviews.isLast())
+				.isfirstPage(reviews.isFirst()).totalElement(reviews.getTotalElements()).build();
 	}
 
 	@Override
-	public List<ReviewDto> allReviews() {
-		List<Review> reviews = reviewRepo.findAllByDeletedFalse();
-		return reviews.stream().map(e -> mapper.map(e, ReviewDto.class)).collect(Collectors.toList());
+	public ReviewResponse allReviews(int pageNum, int pagSize) {
+		Pageable of = PageRequest.of(pageNum, pagSize);
+		Page<Review> reviews = reviewRepo.findAllByDeletedFalse(of);
+		List<ReviewDto> reviewsDto = reviews.stream().map(e -> mapper.map(e, ReviewDto.class))
+				.collect(Collectors.toList());
+		return ReviewResponse.builder().reviewDto(reviewsDto).totalPage(reviews.getTotalPages())
+				.pageNumber(reviews.getNumber()).pagesize(reviews.getSize()).isLastPage(reviews.isLast())
+				.isfirstPage(reviews.isFirst()).totalElement(reviews.getTotalElements()).build();
 	}
 
 	@Override

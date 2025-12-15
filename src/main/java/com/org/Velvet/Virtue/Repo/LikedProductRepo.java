@@ -2,6 +2,8 @@ package com.org.Velvet.Virtue.Repo;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -14,8 +16,10 @@ public interface LikedProductRepo extends JpaRepository<LikedProduct, Integer> {
 
 	List<LikedProduct> findAllByUsersAndProducts(Users users, Products dbProducts);
 
-	LikedProduct findByUsersAndProducts(Users users, Products dbProducts);
-
 	List<LikedProduct> findAllByUsers(Users users);
+
+	Page<LikedProduct> findByUsers(Users users, Pageable of);
+
+	LikedProduct findByUsersAndProducts(Users users, Products dbProducts);
 
 }
