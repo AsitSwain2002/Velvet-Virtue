@@ -20,9 +20,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.org.Velvet.Virtue.Dto.ProductResponse;
 import com.org.Velvet.Virtue.Dto.ProductTypeDto;
 import com.org.Velvet.Virtue.Dto.ProductsDto;
 import com.org.Velvet.Virtue.Dto.ReviewDto;
+import com.org.Velvet.Virtue.Dto.ReviewResponse;
 import com.org.Velvet.Virtue.Util.CommonUtil;
 import com.org.Velvet.Virtue.Util.ResponseBuilder;
 import com.org.Velvet.Virtue.service.ProductService;
@@ -74,8 +76,9 @@ public class ProductsController {
 
 	@PreAuthorize("hasAnyRole('SELLER','ADMIN','USER')")
 	@GetMapping("/all-product")
-	public ResponseEntity<?> allProduct() {
-		List<ProductsDto> allProduct = productService.allProduct();
+	public ResponseEntity<?> allProduct(@RequestParam(name = "pageNumber", defaultValue = "0") int pageNumber,
+			@RequestParam(name = "pageSize", defaultValue = "16") int pageSize) {
+		ProductResponse allProduct = productService.allProduct(pageNumber, pageSize);
 		if (!ObjectUtils.isEmpty(allProduct)) {
 			return ResponseBuilder.withData("Fetched Successfully", allProduct, HttpStatus.OK);
 		} else {
@@ -107,10 +110,11 @@ public class ProductsController {
 
 	@PreAuthorize("hasRole('USER')")
 	@GetMapping("all-likedProducts")
-	public ResponseEntity<?> allLikedProduct() {
+	public ResponseEntity<?> allLikedProduct(@RequestParam(name = "pageNumber", defaultValue = "0") int pageNumber,
+			@RequestParam(name = "pageSize", defaultValue = "16") int pageSize) {
 		int userId = CommonUtil.getLoggedUser().getId();
-		List<ProductsDto> allLikedProduct = productService.allLikedProduct(userId);
-		if (!CollectionUtils.isEmpty(allLikedProduct)) {
+		ProductResponse allLikedProduct = productService.allLikedProduct(userId, pageNumber, pageSize);
+		if (!ObjectUtils.isEmpty(allLikedProduct)) {
 			return ResponseBuilder.withData("Fetched Successfully", allLikedProduct, HttpStatus.OK);
 		} else {
 			return ResponseBuilder.withOutData("No Liked Product Found", HttpStatus.NOT_FOUND);
@@ -137,10 +141,11 @@ public class ProductsController {
 
 	@PreAuthorize("hasAnyRole('USER','ADMIN')")
 	@GetMapping("all-user-review")
-	public ResponseEntity<?> allUserReview() {
+	public ResponseEntity<?> allUserReview(@RequestParam(name = "pageNumber", defaultValue = "0") int pageNumber,
+			@RequestParam(name = "pageSize", defaultValue = "16") int pageSize) {
 		int userId = 1;
-		List<ReviewDto> allReviewByUser = productService.allReviewByUser(userId);
-		if (!CollectionUtils.isEmpty(allReviewByUser)) {
+		ReviewResponse allReviewByUser = productService.allReviewByUser(userId, pageNumber, pageSize);
+		if (!ObjectUtils.isEmpty(allReviewByUser)) {
 			return ResponseBuilder.withData("Fetched Successfully", allReviewByUser, HttpStatus.OK);
 		} else {
 			return ResponseBuilder.withOutData("No Review Found", HttpStatus.OK);
@@ -149,11 +154,12 @@ public class ProductsController {
 
 	@PreAuthorize("hasAnyRole('ADMIN','USER')")
 	@GetMapping("all-review")
-	public ResponseEntity<?> allReview() {
+	public ResponseEntity<?> allReview(@RequestParam(name = "pageNumber", defaultValue = "0") int pageNumber,
+			@RequestParam(name = "pageSize", defaultValue = "16") int pageSize) {
 
-		List<ReviewDto> allReview = productService.allReviews();
-		if (!CollectionUtils.isEmpty(allReview)) {
-			return ResponseBuilder.withData("Fetched Successfully", allReview, HttpStatus.OK);
+		ReviewResponse allReviews = productService.allReviews(pageNumber, pageSize);
+		if (!ObjectUtils.isEmpty(allReviews)) {
+			return ResponseBuilder.withData("Fetched Successfully", allReviews, HttpStatus.OK);
 		} else {
 			return ResponseBuilder.withOutData("No Review Found", HttpStatus.OK);
 		}

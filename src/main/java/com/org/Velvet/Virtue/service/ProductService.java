@@ -5,8 +5,10 @@ import java.util.List;
 
 import org.springframework.web.multipart.MultipartFile;
 
+import com.org.Velvet.Virtue.Dto.ProductResponse;
 import com.org.Velvet.Virtue.Dto.ProductsDto;
 import com.org.Velvet.Virtue.Dto.ReviewDto;
+import com.org.Velvet.Virtue.Dto.ReviewResponse;
 
 public interface ProductService {
 
@@ -14,7 +16,7 @@ public interface ProductService {
 
 	void deleteProduct(int id);
 
-	List<ProductsDto> allProduct();
+	ProductResponse allProduct(int pageNum, int pagSize);
 
 	List<ProductsDto> searchProduct(String name);
 
@@ -22,16 +24,16 @@ public interface ProductService {
 
 	boolean dislikeProduct(int id);
 
-	List<ProductsDto> allLikedProduct(int userId);
+	ProductResponse allLikedProduct(int userId, int pageNum, int pagSize);
 
 	boolean addReview(ReviewDto reviewDto);
 
 	void deleteReview(int reviewId);
 
-	List<ReviewDto> allReviewByUser(int userId);
+	ReviewResponse allReviewByUser(int userId, int pageNum, int pagSize);
 
-	List<ReviewDto> allReviews();
-	
+	ReviewResponse allReviews(int pageNum, int pagSize);
+
 	ProductsDto findByProductId(int priductId);
 
 }
