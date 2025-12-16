@@ -69,7 +69,7 @@ public class ProductDeliveryController {
 		}
 	}
 
-	@PreAuthorize("hasAnyRole('USER',ADMIN')")
+	@PreAuthorize("hasAnyRole('USER','ADMIN')")
 	@GetMapping("delivery-history")
 	public ResponseEntity<?> deliveryHistory() {
 		// change later
