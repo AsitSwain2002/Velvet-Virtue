@@ -7,19 +7,28 @@ import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
+import com.org.Velvet.Virtue.Dto.DelhiveryResponse;
 import com.org.Velvet.Virtue.Dto.MailData;
+import com.org.Velvet.Virtue.Dto.ProductDeliveryDto;
+import com.org.Velvet.Virtue.Dto.ProductResponse;
 import com.org.Velvet.Virtue.Dto.UsersDto;
 import com.org.Velvet.Virtue.ExceptionHandler.ResourceNotFoundException;
+import com.org.Velvet.Virtue.Model.ProductDelivery;
 import com.org.Velvet.Virtue.Model.Roles;
 import com.org.Velvet.Virtue.Model.UserVerification;
 import com.org.Velvet.Virtue.Model.Users;
 import com.org.Velvet.Virtue.Repo.AddressRepo;
+import com.org.Velvet.Virtue.Repo.ProductDeliveryRepo;
 import com.org.Velvet.Virtue.Repo.RolesRepo;
 import com.org.Velvet.Virtue.Repo.UsersRepo;
+import com.org.Velvet.Virtue.Util.CommonUtil;
 import com.org.Velvet.Virtue.Util.MailService;
 import com.org.Velvet.Virtue.service.UsersService;
 import com.org.Velvet.Virtue.validation.UserValidation;
@@ -37,6 +46,9 @@ public class UsersServiceImpl implements UsersService {
 	private UsersRepo usersRepo;
 	@Autowired
 	private RolesRepo roleRepo;
+
+	@Autowired
+	private ProductDeliveryRepo deliveryRepo;
 	@Autowired
 	private UserValidation userValidation;
 	@Autowired
@@ -122,6 +134,18 @@ public class UsersServiceImpl implements UsersService {
 		user.setDeleted(true);
 		usersRepo.save(user);
 
+	}
+
+	@Override
+	public DelhiveryResponse orders(int pageNumber, int pageSize) {
+		Pageable of = PageRequest.of(pageNumber, pageSize);
+		Integer userId = CommonUtil.getLoggedUser().getId();
+		Users user = usersRepo.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User Not Found"));
+		Page<ProductDelivery> allByUsers = deliveryRepo.findAllByUsers(user, of);
+		List<ProductDeliveryDto> list = allByUsers.stream().map(e -> mapper.map(e, ProductDeliveryDto.class)).toList();
+		return DelhiveryResponse.builder().productDelhiveryDto(list).totalPage(allByUsers.getTotalPages())
+				.pageNumber(allByUsers.getNumber()).pagesize(allByUsers.getSize()).isLastPage(allByUsers.isLast())
+				.isfirstPage(allByUsers.isFirst()).totalElement(allByUsers.getTotalElements()).build();
 	}
 
 }
