@@ -3,6 +3,7 @@ package com.org.Velvet.Virtue.service;
 
 import java.util.List;
 
+import com.org.Velvet.Virtue.Dto.DelhiveryResponse;
 import com.org.Velvet.Virtue.Dto.UsersDto;
 
 import jakarta.mail.MessagingException;
@@ -15,4 +16,6 @@ public interface UsersService {
 	List<UsersDto> findAll();
 
 	void deleteUser(Integer id);
+
+	DelhiveryResponse orders(int pageNumber, int pageSize);
 }

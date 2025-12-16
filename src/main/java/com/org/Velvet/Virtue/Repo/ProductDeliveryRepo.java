@@ -2,6 +2,8 @@ package com.org.Velvet.Virtue.Repo;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -13,5 +15,7 @@ import com.org.Velvet.Virtue.Model.Users;
 public interface ProductDeliveryRepo extends JpaRepository<ProductDelivery, Integer> {
 
 	List<ProductDelivery> findAllByUsersAndOrderStatus(Users map, OrderStatus staus);
+
+	Page<ProductDelivery> findAllByUsers(Users user, Pageable of);
 
 }
