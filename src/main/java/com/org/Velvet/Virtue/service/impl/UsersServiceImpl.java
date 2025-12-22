@@ -34,6 +34,7 @@ import com.org.Velvet.Virtue.service.UsersService;
 import com.org.Velvet.Virtue.validation.UserValidation;
 
 import jakarta.mail.MessagingException;
+import jakarta.transaction.Transactional;
 
 @Service
 public class UsersServiceImpl implements UsersService {
@@ -56,6 +57,7 @@ public class UsersServiceImpl implements UsersService {
 	@Autowired
 	private MailService mailService;
 
+	@Transactional
 	@Override
 	public boolean saveUser(UsersDto usersDto, String reqUrl) throws MessagingException {
 		// --------- validate user -------
