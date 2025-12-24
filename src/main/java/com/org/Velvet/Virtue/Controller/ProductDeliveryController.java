@@ -60,12 +60,12 @@ public class ProductDeliveryController {
 
 	@PreAuthorize("hasAnyRole('USER','ADMIN')")
 	@GetMapping("track-order/{deliveryId}")
-	public ResponseEntity<?> trackOrder(@PathVariable int deliveryId) {
+	public ResponseEntity<?> trackOrder(@PathVariable String deliveryId) {
 		ProductDeliveryDto trackDelivery = deliveryService.trackDelivery(deliveryId);
 		if (!ObjectUtils.isEmpty(trackDelivery)) {
 			return ResponseBuilder.withData("fetched", trackDelivery, HttpStatus.OK);
 		} else {
-			return ResponseBuilder.withOutData("Internal Server Error", HttpStatus.INTERNAL_SERVER_ERROR);
+			return ResponseBuilder.withOutData("No Order found", HttpStatus.OK);
 		}
 	}
 
@@ -78,7 +78,7 @@ public class ProductDeliveryController {
 		if (!CollectionUtils.isEmpty(deliveryHistory)) {
 			return ResponseBuilder.withData("fetched", deliveryHistory, HttpStatus.OK);
 		} else {
-			return ResponseBuilder.withOutData("Nothing Found", HttpStatus.NOT_FOUND);
+			return ResponseBuilder.withOutData("Nothing Found", HttpStatus.OK);
 		}
 	}
 

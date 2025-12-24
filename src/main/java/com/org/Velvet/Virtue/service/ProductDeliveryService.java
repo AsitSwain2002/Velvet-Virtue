@@ -13,7 +13,7 @@ public interface ProductDeliveryService {
 
 	void cancelOrder(int deliveryId);
 
-	ProductDeliveryDto trackDelivery(int deliveryId);
+	ProductDeliveryDto trackDelivery(String deliveryId);
 
 	List<ProductDeliveryDto> getDeliveryHistory(int userId);
 

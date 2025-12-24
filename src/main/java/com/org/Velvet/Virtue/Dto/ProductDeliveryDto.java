@@ -3,6 +3,8 @@ package com.org.Velvet.Virtue.Dto;
 import java.time.LocalDate;
 import java.util.List;
 
+import com.org.Velvet.Virtue.Dto.ProductsDto.CategoryDto;
+import com.org.Velvet.Virtue.Dto.ProductsDto.FileDetailsDto;
 import com.org.Velvet.Virtue.Dto.UsersDto.RolesDto;
 import com.org.Velvet.Virtue.Model.Address;
 import com.org.Velvet.Virtue.Model.OrderStatus;
@@ -36,6 +38,7 @@ public class ProductDeliveryDto {
 	@AllArgsConstructor
 	public static class OrderStatusDto {
 		private int id;
+		private String name;
 	}
 
 	@Getter
@@ -49,5 +52,31 @@ public class ProductDeliveryDto {
 		private String email;
 		private String password;
 		private String age;
+	}
+
+	@Getter
+	@Setter
+	@NoArgsConstructor
+	@AllArgsConstructor
+	public static class ProductsDto {
+		private Integer id;
+		private String name;
+		private double price;
+		private CategoryDto category;
+		private List<FileDetailsDto> fileDetails;
+		private ProductTypeDto productType;
+
+		@Getter
+		@Setter
+		public static class CategoryDto {
+			private int id;
+			private String name;
+		}
+
+		@Getter
+		@Setter
+		public static class FileDetailsDto {
+			private String displayFileName;
+		}
 	}
 }
