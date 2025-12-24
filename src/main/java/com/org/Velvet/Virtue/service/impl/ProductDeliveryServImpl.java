@@ -69,7 +69,7 @@ public class ProductDeliveryServImpl implements ProductDeliveryService {
 			order.setOrderDate(LocalDate.now());
 			ProductDelivery save = deliveryRepo.save(order);
 			// after buy the product update the quantity of product
-			updateProductQuantity(c.getProductsId(),c.getQuantity());
+			updateProductQuantity(c.getProductsId(), c.getQuantity());
 			if (!ObjectUtils.isEmpty(save)) {
 				cartService.removeAllCartItem(userId);
 				res = true;
@@ -79,11 +79,11 @@ public class ProductDeliveryServImpl implements ProductDeliveryService {
 		return res;
 	}
 
-	private void updateProductQuantity(int productsId, int quantity) { 
+	private void updateProductQuantity(int productsId, int quantity) {
 		Products product = productRepo.findById(productsId)
 				.orElseThrow(() -> new ResourceNotFoundException("Product Not Found"));
 		product.setQuantity(product.getQuantity() - quantity);
-		productRepo.save(product);  
+		productRepo.save(product);
 
 	}
 
@@ -127,7 +127,7 @@ public class ProductDeliveryServImpl implements ProductDeliveryService {
 	}
 
 	private void setStatus(ProductDelivery order) {
-		int statusId = 1;
+		int statusId = 1;//Order Placed status
 		OrderStatus orderStatus = statusRepo.findById(statusId)
 				.orElseThrow(() -> new ResourceNotFoundException(" Order Status is Invalid"));
 		order.setOrderStatus(orderStatus);
@@ -155,18 +155,17 @@ public class ProductDeliveryServImpl implements ProductDeliveryService {
 	}
 
 	@Override
-	public ProductDeliveryDto trackDelivery(int deliveryId) {
-		ProductDelivery order = deliveryRepo.findById(deliveryId)
-				.orElseThrow(() -> new ResourceNotFoundException(" Order Not Found"));
-		return mapper.map(order, ProductDeliveryDto.class);
+	public ProductDeliveryDto trackDelivery(String orderId) {
+		ProductDelivery deliveryProduct = deliveryRepo.findByOrderId(orderId);
+		return mapper.map(deliveryProduct, ProductDeliveryDto.class);
 	}
 
 	@Override
 	public List<ProductDeliveryDto> getDeliveryHistory(int userId) {
 		UsersDto findById = userService.findById(userId);
-		OrderStatus staus = statusRepo.findById(5).orElseThrow(() -> new ResourceNotFoundException(" Order Not Found"));
+		OrderStatus status = statusRepo.findById(5).orElseThrow(() -> new ResourceNotFoundException("Status Not Found"));
 		List<ProductDelivery> allOrder = deliveryRepo.findAllByUsersAndOrderStatus(mapper.map(findById, Users.class),
-				staus);
+				status);
 		return allOrder.stream().map(e -> mapper.map(e, ProductDeliveryDto.class)).collect(Collectors.toList());
 	}
 
