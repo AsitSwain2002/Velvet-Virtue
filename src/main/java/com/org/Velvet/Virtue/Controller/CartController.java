@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.org.Velvet.Virtue.Dto.CartDto;
+import com.org.Velvet.Virtue.Util.CommonUtil;
 import com.org.Velvet.Virtue.Util.ResponseBuilder;
 import com.org.Velvet.Virtue.service.CartService;
 
@@ -62,7 +63,7 @@ public class CartController {
 	@PreAuthorize("hasRole('USER')")
 	@GetMapping("all-cart-item")
 	public ResponseEntity<?> allCartItem() {
-		int userId = 1;
+		int userId = CommonUtil.getLoggedUser().getId();
 		List<CartDto> allCart = cartService.findAllCart(userId);
 		if (!CollectionUtils.isEmpty(allCart)) {
 			return ResponseBuilder.withData("Fetched Successfully", allCart, HttpStatus.CREATED);

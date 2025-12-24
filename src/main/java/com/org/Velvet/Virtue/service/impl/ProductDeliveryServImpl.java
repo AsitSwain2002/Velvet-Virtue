@@ -68,6 +68,8 @@ public class ProductDeliveryServImpl implements ProductDeliveryService {
 			setPrice(order, c);
 			order.setOrderDate(LocalDate.now());
 			ProductDelivery save = deliveryRepo.save(order);
+			// after buy the product update the quantity of product
+			updateProductQuantity(c.getProductsId(),c.getQuantity());
 			if (!ObjectUtils.isEmpty(save)) {
 				cartService.removeAllCartItem(userId);
 				res = true;
@@ -75,6 +77,14 @@ public class ProductDeliveryServImpl implements ProductDeliveryService {
 		}
 
 		return res;
+	}
+
+	private void updateProductQuantity(int productsId, int quantity) { 
+		Products product = productRepo.findById(productsId)
+				.orElseThrow(() -> new ResourceNotFoundException("Product Not Found"));
+		product.setQuantity(product.getQuantity() - quantity);
+		productRepo.save(product);  
+
 	}
 
 	private void setOrderId(ProductDelivery order) {
