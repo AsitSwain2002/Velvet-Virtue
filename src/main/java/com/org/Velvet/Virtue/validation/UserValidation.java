@@ -42,11 +42,11 @@ public class UserValidation {
 		} else {
 			// ------- firstName validation ------
 			if (firstName == null) {
-				error.put("firstname", "firstname can't be null");
+				error.put("firstName", "firstname can't be null");
 			} else if (firstName.length() < 3) {
-				error.put("firstname", "firstname length is too short (Minimum 4 character required)");
+				error.put("firstName", "firstname length is too short (Minimum 4 character required)");
 			} else if (firstName.length() >= 20) {
-				error.put("firstname", "firstname length is too big (maximum 20 character allowed)");
+				error.put("firstName", "firstname length is too big (maximum 20 character allowed)");
 			}
 
 			// ------- LastName validation ------
@@ -54,7 +54,7 @@ public class UserValidation {
 				error.put("lastName", "lastName can't be null");
 			} else if (lastName.length() < 3) {
 				error.put("lastName", "lastName length is too short (Minimum 4 character required)");
-			} else if (firstName.length() >= 20) {
+			} else if (lastName.length() >= 20) {
 				error.put("lastName", "lastName length is too big (maximum 20 character allowed)");
 			}
 
@@ -64,12 +64,6 @@ public class UserValidation {
 			} else if (mobile.length() != 10) {
 				error.put("mobile", "mobile number is invalid");
 			}
-			if (mobile == null) {
-				error.put("mobile", "mobile number can't be null");
-			} else if (mobile.length() != 10) {
-				error.put("mobile", "mobile number is invalid");
-			}
-
 			// ------- Password validation ------
 			if (password == null) {
 				error.put("password", "password can't be null");
