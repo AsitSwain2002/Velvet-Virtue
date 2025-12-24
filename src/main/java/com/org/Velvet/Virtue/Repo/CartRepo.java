@@ -12,5 +12,4 @@ import com.org.Velvet.Virtue.Model.Users;
 public interface CartRepo extends JpaRepository<Cart, Integer> {
 
 	List<Cart> findAllByUser(Users user);
-
 }

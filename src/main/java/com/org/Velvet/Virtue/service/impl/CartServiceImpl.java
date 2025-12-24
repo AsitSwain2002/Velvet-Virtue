@@ -19,6 +19,8 @@ import com.org.Velvet.Virtue.Repo.UsersRepo;
 import com.org.Velvet.Virtue.Util.CommonUtil;
 import com.org.Velvet.Virtue.service.CartService;
 
+import jakarta.transaction.Transactional;
+
 @Service
 public class CartServiceImpl implements CartService {
 
@@ -34,18 +36,19 @@ public class CartServiceImpl implements CartService {
 	private ModelMapper mapper;
 
 	@Override
+	@Transactional
 	public boolean addToCart(CartDto cartDto) {
 		int userId = CommonUtil.getLoggedUser().getId();
 		Cart cart = mapper.map(cartDto, Cart.class);
 		if (cartDto.getId() != 0) {
 			updateCart(cart, cartDto);
-		} else {
-			// change latter use product service find by id
-			Products product = productRepo.findById(cartDto.getProductsId())
-					.orElseThrow(() -> new ResourceNotFoundException("Product Not Found"));
-			Users user = userRepo.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User Not found"));
-			cart.setQuantity(cartDto.getQuantity());
 		}
+		// change latter use product service find by id
+		// it is used to check the saved user and product is legit or not
+		Products product = productRepo.findById(cartDto.getProductsId())
+				.orElseThrow(() -> new ResourceNotFoundException("Product Not Found"));
+		Users user = userRepo.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User Not found"));
+		cart.setQuantity(cartDto.getQuantity());
 		Cart save = cartRepo.save(cart);
 		if (!ObjectUtils.isEmpty(save)) {
 			return true;
