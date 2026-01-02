@@ -15,10 +15,10 @@ public interface ProductRepo extends JpaRepository<Products, Integer> {
 
 	Page<Products> findAllByDeletedFalseAndActiveTrue(Pageable page);
 
-	List<Products> findByNameContaining(String name);
-
 	boolean existsByName(String pName);
 
 	List<Products> findAllByDeletedAndDeletedOnBefore(boolean b, LocalDateTime minusDays);
+
+	List<Products> findByNameContainingIgnoreCaseOrProductType_TypeContainingIgnoreCase(String name, String name2);
 
 }
