@@ -44,4 +44,9 @@ public class AuthController {
 			return ResponseBuilder.withOutData("Invalid Verification Link", HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
+
+	@PostMapping("/logout")
+	public ResponseEntity<?> logout() {
+		return ResponseEntity.ok("Logout successful");
+	}
 }
