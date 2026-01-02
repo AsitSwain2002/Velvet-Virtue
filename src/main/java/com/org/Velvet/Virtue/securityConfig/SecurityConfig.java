@@ -18,6 +18,8 @@ import org.springframework.security.web.DefaultSecurityFilterChain;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import jakarta.servlet.http.HttpServletResponse;
+
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
@@ -35,14 +37,20 @@ public class SecurityConfig {
 						req -> req.requestMatchers("/api/v1/user/**").permitAll().anyRequest().authenticated())
 				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 				.addFilterBefore(filterService, UsernamePasswordAuthenticationFilter.class)
-				.httpBasic(Customizer.withDefaults()).build();
+				.httpBasic(Customizer.withDefaults()).logout(logout -> logout.logoutUrl("/api/v1/user/logout")
+						.logoutSuccessHandler((request, response, authentication) -> {
+							response.setStatus(HttpServletResponse.SC_OK);
+							response.getWriter().write("Logout successful");
+						}))
+
+				.build();
 		return build;
 	}
 
 	@Bean
 	public PasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder();
-	}  
+	}
 
 	@Bean
 	public DaoAuthenticationProvider authenticationProvider() {
