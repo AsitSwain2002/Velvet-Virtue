@@ -40,11 +40,18 @@ public class ProductsController {
 	@Autowired
 	private ProductTypeService productTypeService;
 
+	/**
+	 * Save a new product ---------------------------------- Accessible only by
+	 * SELLER Accepts product data as JSON string Accepts multiple images as
+	 * multipart files
+	 */
 	@PreAuthorize("hasRole('SELLER')")
 	@PostMapping(value = "/save-product", consumes = { "multipart/form-data" })
 	public ResponseEntity<?> saveProduct(@RequestParam String productsDto,
 			@RequestParam(required = false) List<MultipartFile> files) throws IOException {
+
 		boolean product = productService.saveProduct(productsDto, files);
+
 		if (product) {
 			return ResponseBuilder.withOutData("Saved Successfully", HttpStatus.OK);
 		} else {
@@ -52,10 +59,16 @@ public class ProductsController {
 		}
 	}
 
+	/**
+	 * Save product type / category ---------------------------------- Accessible
+	 * only by ADMIN
+	 */
 	@PreAuthorize("hasRole('ADMIN')")
 	@PostMapping("/save-product-type")
 	public ResponseEntity<?> saveProductType(@RequestBody ProductTypeDto dto) {
+
 		boolean saveType = productTypeService.saveType(dto);
+
 		if (saveType) {
 			return ResponseBuilder.withOutData("Saved Successfully", HttpStatus.OK);
 		} else {
@@ -63,22 +76,34 @@ public class ProductsController {
 		}
 	}
 
-	@PreAuthorize("hasRole('SELLER','ADMIN)")
+	/**
+	 * Search product by name ---------------------------------- Accessible by
+	 * SELLER and ADMIN
+	 */
+	@PreAuthorize("hasAnyRole('SELLER','ADMIN')")
 	@GetMapping("/search-product/{name}")
 	public ResponseEntity<?> searchProduct(@PathVariable String name) {
+
 		List<ProductsDto> allProduct = productService.searchProduct(name);
+
 		if (!ObjectUtils.isEmpty(allProduct)) {
-			return ResponseBuilder.withData("fetched", allProduct, HttpStatus.OK);
+			return ResponseBuilder.withData("Fetched", allProduct, HttpStatus.OK);
 		} else {
 			return ResponseBuilder.withOutData("No Product Found", HttpStatus.NOT_FOUND);
 		}
 	}
 
+	/**
+	 * Get all products with pagination ----------------------------------
+	 * Accessible by USER, SELLER, ADMIN
+	 */
 	@PreAuthorize("hasAnyRole('SELLER','ADMIN','USER')")
 	@GetMapping("/all-product")
 	public ResponseEntity<?> allProduct(@RequestParam(name = "pageNumber", defaultValue = "0") int pageNumber,
 			@RequestParam(name = "pageSize", defaultValue = "16") int pageSize) {
+
 		ProductResponse allProduct = productService.allProduct(pageNumber, pageSize);
+
 		if (!ObjectUtils.isEmpty(allProduct)) {
 			return ResponseBuilder.withData("Fetched Successfully", allProduct, HttpStatus.OK);
 		} else {
@@ -86,10 +111,15 @@ public class ProductsController {
 		}
 	}
 
+	/**
+	 * Like a product ---------------------------------- Accessible only by USER
+	 */
 	@PreAuthorize("hasRole('USER')")
 	@PostMapping("like-product/{productId}")
 	public ResponseEntity<?> likeProduct(@PathVariable int productId) {
+
 		boolean like = productService.likeProduct(productId);
+
 		if (like) {
 			return ResponseBuilder.withOutData("Liked Successfully", HttpStatus.OK);
 		} else {
@@ -97,10 +127,15 @@ public class ProductsController {
 		}
 	}
 
+	/**
+	 * Dislike a product ---------------------------------- Accessible only by USER
+	 */
 	@PreAuthorize("hasRole('USER')")
 	@PostMapping("dislike-product/{productId}")
 	public ResponseEntity<?> dislikeProduct(@PathVariable int productId) {
+
 		boolean dislike = productService.dislikeProduct(productId);
+
 		if (dislike) {
 			return ResponseBuilder.withOutData("DisLiked Successfully", HttpStatus.OK);
 		} else {
@@ -108,12 +143,18 @@ public class ProductsController {
 		}
 	}
 
+	/**
+	 * Get all liked products of logged-in user ----------------------------------
+	 * Accessible only by USER
+	 */
 	@PreAuthorize("hasRole('USER')")
 	@GetMapping("all-likedProducts")
 	public ResponseEntity<?> allLikedProduct(@RequestParam(name = "pageNumber", defaultValue = "0") int pageNumber,
 			@RequestParam(name = "pageSize", defaultValue = "16") int pageSize) {
+
 		int userId = CommonUtil.getLoggedUser().getId();
 		ProductResponse allLikedProduct = productService.allLikedProduct(userId, pageNumber, pageSize);
+
 		if (!ObjectUtils.isEmpty(allLikedProduct)) {
 			return ResponseBuilder.withData("Fetched Successfully", allLikedProduct, HttpStatus.OK);
 		} else {
@@ -121,30 +162,47 @@ public class ProductsController {
 		}
 	}
 
+	/**
+	 * Add review to a product ---------------------------------- Accessible only by
+	 * USER
+	 */
 	@PreAuthorize("hasRole('USER')")
 	@PostMapping("add-review")
 	public ResponseEntity<?> addReview(@RequestBody ReviewDto reviewDto) {
+
 		boolean review = productService.addReview(reviewDto);
+
 		if (review) {
-			return ResponseBuilder.withOutData("Review Added  Successfully", HttpStatus.OK);
+			return ResponseBuilder.withOutData("Review Added Successfully", HttpStatus.OK);
 		} else {
 			return ResponseBuilder.withOutData("Internal Server Error", HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 
+	/**
+	 * Delete a product ---------------------------------- Accessible by ADMIN and
+	 * SELLER
+	 */
 	@PreAuthorize("hasAnyRole('SELLER','ADMIN')")
 	@DeleteMapping("/delete/{productId}")
 	public ResponseEntity<?> deleteProduct(@PathVariable int productId) {
+
 		productService.deleteProduct(productId);
 		return ResponseBuilder.withOutData("Product Deleted", HttpStatus.NO_CONTENT);
 	}
 
+	/**
+	 * Get all reviews added by logged-in user ----------------------------------
+	 * Accessible by USER and ADMIN
+	 */
 	@PreAuthorize("hasAnyRole('USER','ADMIN')")
 	@GetMapping("all-user-review")
 	public ResponseEntity<?> allUserReview(@RequestParam(name = "pageNumber", defaultValue = "0") int pageNumber,
 			@RequestParam(name = "pageSize", defaultValue = "16") int pageSize) {
-		int userId = 1;
+
+		int userId = CommonUtil.getLoggedUser().getId();
 		ReviewResponse allReviewByUser = productService.allReviewByUser(userId, pageNumber, pageSize);
+
 		if (!ObjectUtils.isEmpty(allReviewByUser)) {
 			return ResponseBuilder.withData("Fetched Successfully", allReviewByUser, HttpStatus.OK);
 		} else {
@@ -152,12 +210,17 @@ public class ProductsController {
 		}
 	}
 
+	/**
+	 * Get all product reviews ---------------------------------- Accessible by USER
+	 * and ADMIN
+	 */
 	@PreAuthorize("hasAnyRole('ADMIN','USER')")
 	@GetMapping("all-review")
 	public ResponseEntity<?> allReview(@RequestParam(name = "pageNumber", defaultValue = "0") int pageNumber,
 			@RequestParam(name = "pageSize", defaultValue = "16") int pageSize) {
 
 		ReviewResponse allReviews = productService.allReviews(pageNumber, pageSize);
+
 		if (!ObjectUtils.isEmpty(allReviews)) {
 			return ResponseBuilder.withData("Fetched Successfully", allReviews, HttpStatus.OK);
 		} else {
@@ -165,15 +228,20 @@ public class ProductsController {
 		}
 	}
 
+	/**
+	 * Get product details by product ID ----------------------------------
+	 * Accessible by ADMIN, USER, SELLER
+	 */
 	@PreAuthorize("hasAnyRole('ADMIN','USER','SELLER')")
 	@GetMapping("/{id}")
 	public ResponseEntity<?> findById(@PathVariable int id) {
+
 		ProductsDto product = productService.findByProductId(id);
+
 		if (!ObjectUtils.isEmpty(product)) {
 			return ResponseBuilder.withData("Fetched Successfully", product, HttpStatus.OK);
 		} else {
 			return ResponseBuilder.withOutData("No Product Found", HttpStatus.OK);
 		}
 	}
-
 }

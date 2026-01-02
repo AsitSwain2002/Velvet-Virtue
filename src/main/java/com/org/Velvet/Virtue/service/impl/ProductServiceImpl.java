@@ -252,7 +252,7 @@ public class ProductServiceImpl implements ProductService {
 
 	@Override
 	public List<ProductsDto> searchProduct(String name) {
-		List<Products> products = productRepo.findByNameContaining(name);
+		List<Products> products =  productRepo.findByNameContainingIgnoreCaseOrProductType_TypeContainingIgnoreCase(name, name);
 		return products.stream().map(e -> mapper.map(e, ProductsDto.class)).collect(Collectors.toList());
 	}
 
