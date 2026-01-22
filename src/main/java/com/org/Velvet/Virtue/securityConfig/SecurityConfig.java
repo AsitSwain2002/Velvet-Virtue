@@ -33,8 +33,9 @@ public class SecurityConfig {
 	@Bean
 	public SecurityFilterChain chain(HttpSecurity security) throws Exception {
 		DefaultSecurityFilterChain build = security.csrf(csrf -> csrf.disable())
-				.authorizeHttpRequests(
-						req -> req.requestMatchers("/api/v1/user/**").permitAll().anyRequest().authenticated())
+				.authorizeHttpRequests(req -> req
+						.requestMatchers("/api/v1/user/**", "/swagger-ui/**", "/swagger-ui.html", "/v3/api-docs/**")
+						.permitAll().anyRequest().authenticated())
 				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 				.addFilterBefore(filterService, UsernamePasswordAuthenticationFilter.class)
 				.httpBasic(Customizer.withDefaults()).logout(logout -> logout.logoutUrl("/api/v1/user/logout")
