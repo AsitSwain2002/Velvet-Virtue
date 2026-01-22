@@ -22,13 +22,18 @@ import com.org.Velvet.Virtue.Util.CommonUtil;
 import com.org.Velvet.Virtue.Util.ResponseBuilder;
 import com.org.Velvet.Virtue.service.ProductDeliveryService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 @RestController
 @RequestMapping("api/v1/delivery/")
+@Tag(name = "Product delhivery", description = "all operation for delhivery th eproduct")
 public class ProductDeliveryController {
 
 	@Autowired
 	private ProductDeliveryService deliveryService;
 
+	@Operation(summary = "add to delhivery - access by user", tags = { "Product delhivery" })
 	@PreAuthorize("hasRole('USER')")
 	@PostMapping("save-delhivery")
 	public ResponseEntity<?> saveDelhivery(@RequestBody ProductDeliveryDto deliveryDto) {
@@ -40,6 +45,7 @@ public class ProductDeliveryController {
 		}
 	}
 
+	@Operation(summary = "update delhivery status - Acess by user", tags = { "Product delhivery" })
 	@PreAuthorize("hasRole('USER')")
 	@PostMapping("update-delhivery-status/{deliveryId}/{statusId}")
 	public ResponseEntity<?> updateStatus(@PathVariable int deliveryId, @PathVariable int statusId) {
@@ -51,6 +57,7 @@ public class ProductDeliveryController {
 		}
 	}
 
+	@Operation(summary = "cancel the order - access by user,admin,seller", tags = { "Product delhivery" })
 	@PreAuthorize("hasAnyRole('USER','ADMIN','SELLER')")
 	@PostMapping("cancel-order/{deliveryId}")
 	public ResponseEntity<?> cancelOrder(@PathVariable int deliveryId) {
@@ -58,6 +65,7 @@ public class ProductDeliveryController {
 		return ResponseBuilder.withOutData("Order Cancelled Successfully", HttpStatus.OK);
 	}
 
+	@Operation(summary = "track the order - Access by User,Admin", tags = { "Product delhivery" })
 	@PreAuthorize("hasAnyRole('USER','ADMIN')")
 	@GetMapping("track-order/{deliveryId}")
 	public ResponseEntity<?> trackOrder(@PathVariable String deliveryId) {
@@ -69,6 +77,7 @@ public class ProductDeliveryController {
 		}
 	}
 
+	@Operation(summary = "See all deliverd order - Access by User,Admin", tags = { "Product delhivery" })
 	@PreAuthorize("hasAnyRole('USER','ADMIN')")
 	@GetMapping("delivery-history")
 	public ResponseEntity<?> deliveryHistory() {
@@ -82,6 +91,7 @@ public class ProductDeliveryController {
 		}
 	}
 
+	@Operation(summary = "update address - Access by User", tags = { "Product delhivery" })
 	@PreAuthorize("hasRole('USER')")
 	@PutMapping("update-address/{deliveryId}")
 	public ResponseEntity<?> updateAddress(@PathVariable int deliveryId, @RequestBody AddressDto addressDto) {

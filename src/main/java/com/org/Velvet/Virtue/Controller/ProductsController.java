@@ -30,8 +30,12 @@ import com.org.Velvet.Virtue.Util.ResponseBuilder;
 import com.org.Velvet.Virtue.service.ProductService;
 import com.org.Velvet.Virtue.service.ProductTypeService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 @RestController
 @RequestMapping("/api/v1/products")
+@Tag(name = "Product", description = "All Product Service written here")
 public class ProductsController {
 
 	@Autowired
@@ -45,6 +49,7 @@ public class ProductsController {
 	 * SELLER Accepts product data as JSON string Accepts multiple images as
 	 * multipart files
 	 */
+	@Operation(summary = "add the product - Seller can access", tags = { "Product" })
 	@PreAuthorize("hasRole('SELLER')")
 	@PostMapping(value = "/save-product", consumes = { "multipart/form-data" })
 	public ResponseEntity<?> saveProduct(@RequestParam String productsDto,
@@ -63,6 +68,7 @@ public class ProductsController {
 	 * Save product type / category ---------------------------------- Accessible
 	 * only by ADMIN
 	 */
+	@Operation(summary = "Add Product type - Access by Admin", tags = { "Product" })
 	@PreAuthorize("hasRole('ADMIN')")
 	@PostMapping("/save-product-type")
 	public ResponseEntity<?> saveProductType(@RequestBody ProductTypeDto dto) {
@@ -80,7 +86,8 @@ public class ProductsController {
 	 * Search product by name ---------------------------------- Accessible by
 	 * SELLER and ADMIN
 	 */
-	@PreAuthorize("hasAnyRole('SELLER','ADMIN')")
+	@Operation(summary = "Search Product - Access By User,Admin,Seller",tags= {"Product"})
+	@PreAuthorize("hasAnyRole('SELLER','ADMIN','USER')")
 	@GetMapping("/search-product")
 	public ResponseEntity<?> searchProduct(@RequestParam String name,
 			@RequestParam(name = "pageNumber", defaultValue = "0") int pageNumber,
@@ -100,6 +107,7 @@ public class ProductsController {
 	 * Get all products with pagination ----------------------------------
 	 * Accessible by USER, SELLER, ADMIN
 	 */
+	@Operation(summary = "all product - Access by User,Admin,Seller",tags= {"Product"})
 	@PreAuthorize("hasAnyRole('SELLER','ADMIN','USER')")
 	@GetMapping("/all-product")
 	public ResponseEntity<?> allProduct(@RequestParam(name = "pageNumber", defaultValue = "0") int pageNumber,
@@ -117,6 +125,7 @@ public class ProductsController {
 	/**
 	 * Like a product ---------------------------------- Accessible only by USER
 	 */
+	@Operation(summary = "like the product - Acces by User", tags = { "Product" })
 	@PreAuthorize("hasRole('USER')")
 	@PostMapping("like-product/{productId}")
 	public ResponseEntity<?> likeProduct(@PathVariable int productId) {
@@ -133,6 +142,7 @@ public class ProductsController {
 	/**
 	 * Dislike a product ---------------------------------- Accessible only by USER
 	 */
+	@Operation(summary = "dislike the product - Access by User", tags = { "Product" })
 	@PreAuthorize("hasRole('USER')")
 	@PostMapping("dislike-product/{productId}")
 	public ResponseEntity<?> dislikeProduct(@PathVariable int productId) {
@@ -150,6 +160,7 @@ public class ProductsController {
 	 * Get all liked products of logged-in user ----------------------------------
 	 * Accessible only by USER
 	 */
+	@Operation(summary = "all liked product - Access by User", tags = { "Product" })
 	@PreAuthorize("hasRole('USER')")
 	@GetMapping("all-likedProducts")
 	public ResponseEntity<?> allLikedProduct(@RequestParam(name = "pageNumber", defaultValue = "0") int pageNumber,
@@ -171,6 +182,7 @@ public class ProductsController {
 	 */
 	@PreAuthorize("hasRole('USER')")
 	@PostMapping("add-review")
+	@Operation(summary = "add review - Access by User", tags = { "Product" })
 	public ResponseEntity<?> addReview(@RequestBody ReviewDto reviewDto) {
 
 		boolean review = productService.addReview(reviewDto);
@@ -186,6 +198,7 @@ public class ProductsController {
 	 * Delete a product ---------------------------------- Accessible by ADMIN and
 	 * SELLER
 	 */
+	@Operation(summary = "delete product - Access by Seller and Admin", tags = { "Product" })
 	@PreAuthorize("hasAnyRole('SELLER','ADMIN')")
 	@DeleteMapping("/delete/{productId}")
 	public ResponseEntity<?> deleteProduct(@PathVariable int productId) {
@@ -198,6 +211,7 @@ public class ProductsController {
 	 * Get all reviews added by logged-in user ----------------------------------
 	 * Accessible by USER and ADMIN
 	 */
+	@Operation(summary = "see all user review - Acess by User and Admin", tags= {"Product"})
 	@PreAuthorize("hasAnyRole('USER','ADMIN')")
 	@GetMapping("all-user-review")
 	public ResponseEntity<?> allUserReview(@RequestParam(name = "pageNumber", defaultValue = "0") int pageNumber,
@@ -217,6 +231,7 @@ public class ProductsController {
 	 * Get all product reviews ---------------------------------- Accessible by USER
 	 * and ADMIN
 	 */
+	@Operation(summary = "See all review - Access by Admin and user", tags= {"Product"})
 	@PreAuthorize("hasAnyRole('ADMIN','USER')")
 	@GetMapping("all-review")
 	public ResponseEntity<?> allReview(@RequestParam(name = "pageNumber", defaultValue = "0") int pageNumber,
@@ -235,6 +250,7 @@ public class ProductsController {
 	 * Get product details by product ID ----------------------------------
 	 * Accessible by ADMIN, USER, SELLER
 	 */
+	@Operation(summary = "find user by id - Accesss by User , Admin , Seller", tags = { "Product" })
 	@PreAuthorize("hasAnyRole('ADMIN','USER','SELLER')")
 	@GetMapping("/{id}")
 	public ResponseEntity<?> findById(@PathVariable int id) {

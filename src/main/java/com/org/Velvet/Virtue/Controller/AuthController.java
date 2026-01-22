@@ -19,7 +19,7 @@ import com.org.Velvet.Virtue.service.AuthService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
-@Tag(name = "Auth Service", description = "All authentication service written here")
+@Tag(name = "Authentication", description = "All authentication service written here")
 @RestController
 @RequestMapping("/api/v1/user")
 public class AuthController {
