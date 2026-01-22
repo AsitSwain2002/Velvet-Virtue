@@ -19,6 +19,6 @@ public interface ProductRepo extends JpaRepository<Products, Integer> {
 
 	List<Products> findAllByDeletedAndDeletedOnBefore(boolean b, LocalDateTime minusDays);
 
-	List<Products> findByNameContainingIgnoreCaseOrProductType_TypeContainingIgnoreCase(String name, String name2);
+	Page<Products> findByNameContainingIgnoreCaseOrProductType_TypeContainingIgnoreCase(String name, String name2, Pageable of);
 
 }

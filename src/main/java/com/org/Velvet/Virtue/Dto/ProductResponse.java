@@ -11,7 +11,7 @@ import lombok.Setter;
 @Builder
 public class ProductResponse {
 
-	private List<ProductsDto> productsDtos;
+	private List<ProductsDto> products;
 	private int totalPage;
 	private boolean isLastPage;
 	private boolean isfirstPage;

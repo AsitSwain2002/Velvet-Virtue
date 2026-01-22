@@ -18,7 +18,7 @@ public interface ProductService {
 
 	ProductResponse allProduct(int pageNum, int pagSize);
 
-	List<ProductsDto> searchProduct(String name);
+	ProductResponse searchProduct(String name, int pageNumber, int pageSize, String sortBy, String sortType);
 
 	boolean likeProduct(int id);
 
