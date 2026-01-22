@@ -20,13 +20,18 @@ import com.org.Velvet.Virtue.Util.CommonUtil;
 import com.org.Velvet.Virtue.Util.ResponseBuilder;
 import com.org.Velvet.Virtue.service.CartService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 @RestController
 @RequestMapping("api/v1/cart/")
+@Tag(name = "Cart", description = "Cart Services Written here")
 public class CartController {
 
 	@Autowired
 	private CartService cartService;
 
+	@Operation(summary = "Add to cart endpoint", tags = { "Cart" })
 	@PreAuthorize("hasRole('USER')")
 	@PostMapping("save-cart")
 	public ResponseEntity<?> savCart(@RequestBody CartDto cartDto) {
@@ -38,6 +43,7 @@ public class CartController {
 		}
 	}
 
+	@Operation(summary = "Increment Quantity endpoint", tags = { "Cart" })
 	@PreAuthorize("hasRole('USER')")
 	@PostMapping("increment/{cartId}")
 	public ResponseEntity<?> increment(@PathVariable int cartId) {
@@ -49,6 +55,7 @@ public class CartController {
 		}
 	}
 
+	@Operation(summary = "Decrement Quantity endpoint", tags = { "Cart" })
 	@PreAuthorize("hasRole('USER')")
 	@PostMapping("decrement/{cartId}")
 	public ResponseEntity<?> decrement(@PathVariable int cartId) {
@@ -60,6 +67,7 @@ public class CartController {
 		}
 	}
 
+	@Operation(summary = "All Cart Items endpoint", tags = { "Cart" })
 	@PreAuthorize("hasRole('USER')")
 	@GetMapping("all-cart-item")
 	public ResponseEntity<?> allCartItem() {
@@ -72,6 +80,7 @@ public class CartController {
 		}
 	}
 
+	@Operation(summary = "Delete Cart item endpoint", tags = { "Cart" })
 	@PreAuthorize("hasRole('USER')")
 	@DeleteMapping("delete-cart/{id}")
 	public ResponseEntity<?> deleteCart(@PathVariable int id) {

@@ -19,13 +19,18 @@ import com.org.Velvet.Virtue.Dto.CategoryDto;
 import com.org.Velvet.Virtue.Util.ResponseBuilder;
 import com.org.Velvet.Virtue.service.CategoryService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 @RestController
 @RequestMapping("api/v1/category")
+@Tag(name = "Category", description = "Category Services")
 public class CategoryController {
 
 	@Autowired
 	private CategoryService categoryService;
 
+	@Operation(summary = "Save Category endpont, Admin can access", tags = { "Category" })
 	@PreAuthorize("hasRole('ADMIN')")
 	@PostMapping("/save-category")
 	public ResponseEntity<?> saveCategory(@RequestBody CategoryDto categoryDto) throws Exception {
@@ -37,6 +42,7 @@ public class CategoryController {
 		}
 	}
 
+	@Operation(summary = "Soft Delete Category endpoint ,Admin can access", tags = { "Category" })
 	@PreAuthorize("hasRole('ADMIN')")
 	@DeleteMapping("/{id}")
 	public ResponseEntity<?> delete(@PathVariable int id) {
@@ -44,6 +50,7 @@ public class CategoryController {
 		return ResponseEntity.noContent().build();
 	}
 
+	@Operation(summary = "All Active Category endpoint,Admin Can Access",tags = {"Category"})
 	@PreAuthorize("hasRole('ADMIN')")
 	@PostMapping("/active-category/{id}")
 	public ResponseEntity<?> activeCategory(@PathVariable int id) {
@@ -55,6 +62,7 @@ public class CategoryController {
 		}
 	}
 
+	@Operation(summary = "Remove from recycle bin,Admin can access",tags = {"Category"})
 	@PreAuthorize("hasRole('ADMIN')")
 	@PostMapping("/remove-recycle/{id}")
 	public ResponseEntity<?> removeRecyclebin(@PathVariable int id) {
@@ -66,6 +74,7 @@ public class CategoryController {
 		}
 	}
 
+	@Operation(summary = "All category,Admin can access",tags = {"Category"})
 	@PreAuthorize("hasRole('ADMIN')")
 	@GetMapping("all-category")
 	public ResponseEntity<?> allCategory() {
