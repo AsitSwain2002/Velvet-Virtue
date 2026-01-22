@@ -81,13 +81,16 @@ public class ProductsController {
 	 * SELLER and ADMIN
 	 */
 	@PreAuthorize("hasAnyRole('SELLER','ADMIN')")
-	@GetMapping("/search-product/{name}")
-	public ResponseEntity<?> searchProduct(@PathVariable String name) {
+	@GetMapping("/search-product")
+	public ResponseEntity<?> searchProduct(@RequestParam String name,
+			@RequestParam(name = "pageNumber", defaultValue = "0") int pageNumber,
+			@RequestParam(name = "pageSize", defaultValue = "10") int pageSize, @RequestParam String sortBy,
+			@RequestParam String sortType) {
 
-		List<ProductsDto> allProduct = productService.searchProduct(name);
+		ProductResponse searchProduct = productService.searchProduct(name, pageNumber, pageSize, sortBy, sortType);
 
-		if (!ObjectUtils.isEmpty(allProduct)) {
-			return ResponseBuilder.withData("Fetched", allProduct, HttpStatus.OK);
+		if (!ObjectUtils.isEmpty(searchProduct)) {
+			return ResponseBuilder.withData("Fetched", searchProduct, HttpStatus.OK);
 		} else {
 			return ResponseBuilder.withOutData("No Product Found", HttpStatus.NOT_FOUND);
 		}

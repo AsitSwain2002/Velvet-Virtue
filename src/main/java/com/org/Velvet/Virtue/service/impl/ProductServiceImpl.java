@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
@@ -245,15 +246,21 @@ public class ProductServiceImpl implements ProductService {
 		Page<Products> products = productRepo.findAllByDeletedFalseAndActiveTrue(page);
 		List<ProductsDto> productDto = products.stream().map(e -> mapper.map(e, ProductsDto.class))
 				.collect(Collectors.toList());
-		return ProductResponse.builder().productsDtos(productDto).totalPage(products.getTotalPages())
+		return ProductResponse.builder().products(productDto).totalPage(products.getTotalPages())
 				.pageNumber(products.getNumber()).pagesize(products.getSize()).isLastPage(products.isLast())
 				.isfirstPage(products.isFirst()).totalElement(products.getTotalElements()).build();
 	}
 
 	@Override
-	public List<ProductsDto> searchProduct(String name) {
-		List<Products> products =  productRepo.findByNameContainingIgnoreCaseOrProductType_TypeContainingIgnoreCase(name, name);
-		return products.stream().map(e -> mapper.map(e, ProductsDto.class)).collect(Collectors.toList());
+	public ProductResponse searchProduct(String name, int pageNumber, int pageSize, String sortBy, String sortType) {
+		Sort sort = sortType.equalsIgnoreCase("desc") ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
+		Pageable of = PageRequest.of(pageNumber, pageSize, sort);
+		Page<Products> products = productRepo.findByNameContainingIgnoreCaseOrProductType_TypeContainingIgnoreCase(name,
+				name, of);
+		List<ProductsDto> list = products.stream().map(e -> mapper.map(e, ProductsDto.class)).toList();
+		return ProductResponse.builder().products(list).isfirstPage(products.isFirst()).isLastPage(products.isLast())
+				.pageNumber(products.getNumber()).pagesize(products.getSize()).totalElement(products.getTotalElements())
+				.totalPage(products.getTotalPages()).build();
 	}
 
 	// liked product logic
@@ -305,7 +312,7 @@ public class ProductServiceImpl implements ProductService {
 		List<Products> likedProduct = likedProducts.stream().map(e -> e.getProducts()).collect(Collectors.toList());
 		List<ProductsDto> productsDto = likedProducts.stream().map(e -> mapper.map(e, ProductsDto.class))
 				.collect(Collectors.toList());
-		return ProductResponse.builder().productsDtos(productsDto).totalPage(likedProducts.getTotalPages())
+		return ProductResponse.builder().products(productsDto).totalPage(likedProducts.getTotalPages())
 				.pageNumber(likedProducts.getNumber()).pagesize(likedProducts.getSize())
 				.isLastPage(likedProducts.isLast()).isfirstPage(likedProducts.isFirst())
 				.totalElement(likedProducts.getTotalElements()).build();
