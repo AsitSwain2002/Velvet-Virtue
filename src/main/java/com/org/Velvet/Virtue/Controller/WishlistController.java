@@ -17,12 +17,17 @@ import com.org.Velvet.Virtue.Dto.ProductsDto;
 import com.org.Velvet.Virtue.Util.ResponseBuilder;
 import com.org.Velvet.Virtue.service.WishlistService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 @RestController
 @RequestMapping("/api/v1/wishlist")
+@Tag(name = "Wishlist", description = "All wishlist service")
 public class WishlistController {
 	@Autowired
 	private WishlistService wishlistService;
 
+	@Operation(summary = "add product to wishlist - Access by user", tags = { "Wishlist" })
 	@PreAuthorize("hasRole('USER')")
 	@PostMapping("/add/{productId}")
 	public ResponseEntity<?> addToWatchList(@PathVariable int productId) {
@@ -34,6 +39,7 @@ public class WishlistController {
 		}
 	}
 
+	@Operation(summary = "all wishlist product - Access by user", tags = { "Wishlist" })
 	@PreAuthorize("hasRole('USER')")
 	@GetMapping("/allWishlistProduct")
 	public ResponseEntity<?> allWishListProduct() {
@@ -44,6 +50,8 @@ public class WishlistController {
 			return ResponseBuilder.withOutData("No wishlist product found", HttpStatus.OK);
 		}
 	}
+
+	@Operation(summary = "remove from wishlist - Access by user", tags = { "Wishlist" })
 	@PreAuthorize("hasRole('USER')")
 	@GetMapping("/removeWishList/{productId}")
 	public ResponseEntity<?> removeWishlist(@PathVariable int productId) {
