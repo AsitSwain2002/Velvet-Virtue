@@ -102,4 +102,11 @@ public class CategoryServiceImpl implements CategoryService {
 		return mapper.map(dbCategory, CategoryDto.class);
 	}
 
+	@Override
+	public CategoryDto findByName(String name) {
+		System.out.println(name);
+		Category category = categoryRepo.findByName(name);
+		return mapper.map(category, CategoryDto.class);
+	}
+
 }

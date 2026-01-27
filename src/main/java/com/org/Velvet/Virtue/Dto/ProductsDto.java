@@ -17,6 +17,9 @@ public class ProductsDto {
 	private boolean deleted;
 	private double price;
 	private int discount;
+	private double priceAfterDiscount;
+	private double rating;
+	private int ratingCount;
 	private CategoryDto category;
 	private List<FileDetailsDto> fileDetails;
 	private ProductTypeDto productType;

@@ -27,6 +27,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.org.Velvet.Virtue.Dto.CategoryDto;
+import com.org.Velvet.Virtue.Dto.ProductRequest;
 import com.org.Velvet.Virtue.Dto.ProductResponse;
 import com.org.Velvet.Virtue.Dto.ProductsDto;
 import com.org.Velvet.Virtue.Dto.ReviewDto;
@@ -83,20 +84,18 @@ public class ProductServiceImpl implements ProductService {
 
 	@Override
 	public boolean saveProduct(String reqProd, List<MultipartFile> file) throws IOException {
-
 		ObjectMapper ob = new ObjectMapper();
-		ProductsDto productDto = ob.readValue(reqProd, ProductsDto.class);
+		ProductRequest productDto = ob.readValue(reqProd, ProductRequest.class);
 		// validation code
 		productValidation.validate(productDto);
 		int userId = CommonUtil.getLoggedUser().getId();
 		Products products = mapper.map(productDto, Products.class);
-
 		// update product
 		if (products.getId() != null) {
 			return updateProducts(products);
 		} else {
 			// get the category
-			CategoryDto category = categoryService.findById(productDto.getCategory().getId());
+			CategoryDto category = categoryService.findByName(productDto.getCategory().getName());
 			products.setCategory(mapper.map(category, Category.class));
 
 			// set discount here
@@ -116,7 +115,7 @@ public class ProductServiceImpl implements ProductService {
 			// set created by
 			products.setCreatedBy(userId);
 			products.setCreatedOn(new Date());
-			products.setActive(true);
+			products.setActive(productDto.isActive());
 			Products save = productRepo.save(products);
 			if (!ObjectUtils.isEmpty(save)) {
 				return true;
@@ -127,8 +126,7 @@ public class ProductServiceImpl implements ProductService {
 	}
 
 	private void setType(Products products) {
-		ProductType orElseThrow = productTypeRepo.findById(products.getProductType().getId())
-				.orElseThrow(() -> new ResourceNotFoundException("Product Type Not Found"));
+		ProductType orElseThrow = productTypeRepo.findByType(products.getProductType().getType());
 		products.setProductType(orElseThrow);
 	}
 
@@ -307,10 +305,12 @@ public class ProductServiceImpl implements ProductService {
 	public ProductResponse allLikedProduct(int userId, int pageNum, int pagSize) {
 		Users users = usersRepo.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User not found"));
 		Pageable of = PageRequest.of(pageNum, pagSize);
-		Page<LikedProduct> likedProducts = likedProductRepo.findByUsers(users, of);
+		Page<LikedProduct> likedProducts = likedProductRepo.findAllByUsers(users, of);
+
 		// find product from likedProduct
 		List<Products> likedProduct = likedProducts.stream().map(e -> e.getProducts()).collect(Collectors.toList());
-		List<ProductsDto> productsDto = likedProducts.stream().map(e -> mapper.map(e, ProductsDto.class))
+
+		List<ProductsDto> productsDto = likedProduct.stream().map(e -> mapper.map(e, ProductsDto.class))
 				.collect(Collectors.toList());
 		return ProductResponse.builder().products(productsDto).totalPage(likedProducts.getTotalPages())
 				.pageNumber(likedProducts.getNumber()).pagesize(likedProducts.getSize())

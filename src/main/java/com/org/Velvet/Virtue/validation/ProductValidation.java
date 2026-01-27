@@ -5,13 +5,14 @@ import java.util.Map;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
 
+import com.org.Velvet.Virtue.Dto.ProductRequest;
 import com.org.Velvet.Virtue.Dto.ProductsDto;
 import com.org.Velvet.Virtue.ExceptionHandler.ProductValidationException;
 
 @Component
 public class ProductValidation {
 
-	public void validate(ProductsDto productDto) {
+	public void validate(ProductRequest productDto) {
 		Map<String, String> errors = new LinkedHashMap<String, String>();
 
 		if (ObjectUtils.isEmpty(productDto)) {
