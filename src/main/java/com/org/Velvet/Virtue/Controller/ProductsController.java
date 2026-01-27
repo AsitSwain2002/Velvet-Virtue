@@ -3,6 +3,7 @@ package com.org.Velvet.Virtue.Controller;
 import java.io.IOException;
 import java.util.List;
 
+import org.modelmapper.internal.bytebuddy.implementation.Implementation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.org.Velvet.Virtue.Dto.ProductRequest;
 import com.org.Velvet.Virtue.Dto.ProductResponse;
 import com.org.Velvet.Virtue.Dto.ProductTypeDto;
 import com.org.Velvet.Virtue.Dto.ProductsDto;
@@ -31,6 +33,9 @@ import com.org.Velvet.Virtue.service.ProductService;
 import com.org.Velvet.Virtue.service.ProductTypeService;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
@@ -52,7 +57,8 @@ public class ProductsController {
 	@Operation(summary = "add the product - Seller can access", tags = { "Product" })
 	@PreAuthorize("hasRole('SELLER')")
 	@PostMapping(value = "/save-product", consumes = { "multipart/form-data" })
-	public ResponseEntity<?> saveProduct(@RequestParam String productsDto,
+	public ResponseEntity<?> saveProduct(
+			@RequestParam @Parameter(description = "Json String Products", required = true, content = @Content(schema = @Schema(implementation = ProductRequest.class))) String productsDto,
 			@RequestParam(required = false) List<MultipartFile> files) throws IOException {
 
 		boolean product = productService.saveProduct(productsDto, files);
@@ -86,7 +92,7 @@ public class ProductsController {
 	 * Search product by name ---------------------------------- Accessible by
 	 * SELLER and ADMIN
 	 */
-	@Operation(summary = "Search Product - Access By User,Admin,Seller",tags= {"Product"})
+	@Operation(summary = "Search Product - Access By User,Admin,Seller", tags = { "Product" })
 	@PreAuthorize("hasAnyRole('SELLER','ADMIN','USER')")
 	@GetMapping("/search-product")
 	public ResponseEntity<?> searchProduct(@RequestParam String name,
@@ -107,7 +113,7 @@ public class ProductsController {
 	 * Get all products with pagination ----------------------------------
 	 * Accessible by USER, SELLER, ADMIN
 	 */
-	@Operation(summary = "all product - Access by User,Admin,Seller",tags= {"Product"})
+	@Operation(summary = "all product - Access by User,Admin,Seller", tags = { "Product" })
 	@PreAuthorize("hasAnyRole('SELLER','ADMIN','USER')")
 	@GetMapping("/all-product")
 	public ResponseEntity<?> allProduct(@RequestParam(name = "pageNumber", defaultValue = "0") int pageNumber,
@@ -211,7 +217,7 @@ public class ProductsController {
 	 * Get all reviews added by logged-in user ----------------------------------
 	 * Accessible by USER and ADMIN
 	 */
-	@Operation(summary = "see all user review - Acess by User and Admin", tags= {"Product"})
+	@Operation(summary = "see all user review - Acess by User and Admin", tags = { "Product" })
 	@PreAuthorize("hasAnyRole('USER','ADMIN')")
 	@GetMapping("all-user-review")
 	public ResponseEntity<?> allUserReview(@RequestParam(name = "pageNumber", defaultValue = "0") int pageNumber,
@@ -231,7 +237,7 @@ public class ProductsController {
 	 * Get all product reviews ---------------------------------- Accessible by USER
 	 * and ADMIN
 	 */
-	@Operation(summary = "See all review - Access by Admin and user", tags= {"Product"})
+	@Operation(summary = "See all review - Access by Admin and user", tags = { "Product" })
 	@PreAuthorize("hasAnyRole('ADMIN','USER')")
 	@GetMapping("all-review")
 	public ResponseEntity<?> allReview(@RequestParam(name = "pageNumber", defaultValue = "0") int pageNumber,

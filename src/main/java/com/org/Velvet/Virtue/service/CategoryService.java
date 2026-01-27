@@ -17,4 +17,6 @@ public interface CategoryService {
 	List<CategoryDto> getAllCategory();
 
 	CategoryDto findById(int id);
+
+	CategoryDto findByName(String name);
 }

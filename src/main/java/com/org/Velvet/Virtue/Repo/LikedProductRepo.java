@@ -16,7 +16,7 @@ public interface LikedProductRepo extends JpaRepository<LikedProduct, Integer> {
 
 	List<LikedProduct> findAllByUsersAndProducts(Users users, Products dbProducts);
 
-	List<LikedProduct> findAllByUsers(Users users);
+	Page<LikedProduct> findAllByUsers(Users users, Pageable of);
 
 	Page<LikedProduct> findByUsers(Users users, Pageable of);
 
