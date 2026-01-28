@@ -322,14 +322,14 @@ public class ProductServiceImpl implements ProductService {
 	@Override
 	public boolean addReview(ReviewDto reviewDto) {
 		Review review = mapper.map(reviewDto, Review.class);
-		Users users = usersRepo.findById(review.getUser().getId())
+		Users users = usersRepo.findById(reviewDto.getUser_id())
 				.orElseThrow(() -> new ResourceNotFoundException("User not found"));
-
+		int productId = reviewDto.getProduct_id();
 		// check the user is buy the product or not
-		checkProductBuyOrNoByUser(users, review);
+		checkProductBuyOrNoByUser(users, productId);
 
 		review.setUser(users);
-		Products product = productRepo.findById(review.getProducts().getId())
+		Products product = productRepo.findById(reviewDto.getProduct_id())
 				.orElseThrow(() -> new ResourceNotFoundException("Product Not found"));
 		review.setProducts(product);
 		Review save = reviewRepo.save(review);
@@ -343,9 +343,8 @@ public class ProductServiceImpl implements ProductService {
 
 	// logic for check the user is buy the product and the product is delivered to
 	// the user after that user can give review
-	private void checkProductBuyOrNoByUser(Users users, Review review) {
+	private void checkProductBuyOrNoByUser(Users users, int productId) {
 
-		Integer productId = review.getProducts().getId();
 		List<ProductDelivery> productDeliveries = users.getProductDeliveries();
 		ProductDelivery productDelivery = productDeliveries.stream().filter(e -> e.getProducts().getId() == productId)
 				.findFirst().get();
