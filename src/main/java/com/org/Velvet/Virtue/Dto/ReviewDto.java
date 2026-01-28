@@ -8,7 +8,7 @@ public class ReviewDto {
 	private int id;
 	private double rating;
 	private String comment;
-	private UsersDto user;
-	private ProductsDto products;
+	private int user_id;
+	private int product_id;
 }
  
