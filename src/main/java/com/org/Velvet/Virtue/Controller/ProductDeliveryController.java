@@ -77,7 +77,7 @@ public class ProductDeliveryController {
 		}
 	}
 
-	@Operation(summary = "See all deliverd order - Access by User,Admin", tags = { "Product delhivery" })
+	@Operation(summary = "See all user deliverd order - Access by User,Admin", tags = { "Product delhivery" })
 	@PreAuthorize("hasAnyRole('USER','ADMIN')")
 	@GetMapping("delivery-history")
 	public ResponseEntity<?> deliveryHistory() {

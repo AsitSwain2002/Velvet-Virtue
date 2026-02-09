@@ -27,6 +27,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.org.Velvet.Virtue.Dto.CategoryDto;
+import com.org.Velvet.Virtue.Dto.OrderStatusDto;
 import com.org.Velvet.Virtue.Dto.ProductRequest;
 import com.org.Velvet.Virtue.Dto.ProductResponse;
 import com.org.Velvet.Virtue.Dto.ProductsDto;
@@ -37,6 +38,7 @@ import com.org.Velvet.Virtue.ExceptionHandler.ReviewNotAllowedException;
 import com.org.Velvet.Virtue.Model.Category;
 import com.org.Velvet.Virtue.Model.FileDetails;
 import com.org.Velvet.Virtue.Model.LikedProduct;
+import com.org.Velvet.Virtue.Model.OrderStatus;
 import com.org.Velvet.Virtue.Model.ProductDelivery;
 import com.org.Velvet.Virtue.Model.ProductType;
 import com.org.Velvet.Virtue.Model.Products;
@@ -47,6 +49,7 @@ import com.org.Velvet.Virtue.Repo.LikedProductRepo;
 import com.org.Velvet.Virtue.Repo.ProductRepo;
 import com.org.Velvet.Virtue.Repo.ProductTypeRepo;
 import com.org.Velvet.Virtue.Repo.ReviewRepo;
+import com.org.Velvet.Virtue.Repo.StatusRepo;
 import com.org.Velvet.Virtue.Repo.UsersRepo;
 import com.org.Velvet.Virtue.Util.CommonUtil;
 import com.org.Velvet.Virtue.service.CategoryService;
@@ -77,6 +80,8 @@ public class ProductServiceImpl implements ProductService {
 	@Autowired
 	private ReviewRepo reviewRepo;
 
+	@Autowired
+	private StatusRepo statusRepo;
 	@Value("${file.upload.path}")
 	private String folderName;
 	@Autowired
@@ -407,6 +412,12 @@ public class ProductServiceImpl implements ProductService {
 		Products product = productRepo.findById(productId)
 				.orElseThrow(() -> new ResourceNotFoundException("Product Not Found"));
 		return mapper.map(product, ProductsDto.class);
+	}
+
+	@Override
+	public List<OrderStatusDto> allOrderStatus() {
+		List<OrderStatus> all = statusRepo.findAll();
+		return all.stream().map(e -> mapper.map(e, OrderStatusDto.class)).collect(Collectors.toList());
 	}
 
 }

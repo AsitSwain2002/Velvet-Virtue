@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.org.Velvet.Virtue.Dto.OrderStatusDto;
 import com.org.Velvet.Virtue.Dto.ProductRequest;
 import com.org.Velvet.Virtue.Dto.ProductResponse;
 import com.org.Velvet.Virtue.Dto.ProductTypeDto;
@@ -54,7 +55,7 @@ public class ProductsController {
 	 * SELLER Accepts product data as JSON string Accepts multiple images as
 	 * multipart files
 	 */
-	@Operation(summary = "add the product - Seller can access", tags = { "Product" })
+	@Operation(summary = "add the product - Seller can access", tags = { "Product" ,"Seller"})
 	@PreAuthorize("hasRole('SELLER')")
 	@PostMapping(value = "/save-product", consumes = { "multipart/form-data" })
 	public ResponseEntity<?> saveProduct(
@@ -131,9 +132,9 @@ public class ProductsController {
 	/**
 	 * Like a product ---------------------------------- Accessible only by USER
 	 */
-	@Operation(summary = "like the product - Acces by User", tags = { "Product" })
+	@Operation(summary = "like the product - Acces by User", tags = { "Product","User" })
 	@PreAuthorize("hasRole('USER')")
-	@PostMapping("like-product/{productId}")
+	@PostMapping("/like-product/{productId}")
 	public ResponseEntity<?> likeProduct(@PathVariable int productId) {
 
 		boolean like = productService.likeProduct(productId);
@@ -148,9 +149,9 @@ public class ProductsController {
 	/**
 	 * Dislike a product ---------------------------------- Accessible only by USER
 	 */
-	@Operation(summary = "dislike the product - Access by User", tags = { "Product" })
+	@Operation(summary = "dislike the product - Access by User", tags = { "Product","User" })
 	@PreAuthorize("hasRole('USER')")
-	@PostMapping("dislike-product/{productId}")
+	@PostMapping("/dislike-product/{productId}")
 	public ResponseEntity<?> dislikeProduct(@PathVariable int productId) {
 
 		boolean dislike = productService.dislikeProduct(productId);
@@ -166,9 +167,9 @@ public class ProductsController {
 	 * Get all liked products of logged-in user ----------------------------------
 	 * Accessible only by USER
 	 */
-	@Operation(summary = "all liked product - Access by User", tags = { "Product" })
+	@Operation(summary = "all liked product - Access by User", tags = { "Product","User" })
 	@PreAuthorize("hasRole('USER')")
-	@GetMapping("all-likedProducts")
+	@GetMapping("/all-likedProducts")
 	public ResponseEntity<?> allLikedProduct(@RequestParam(name = "pageNumber", defaultValue = "0") int pageNumber,
 			@RequestParam(name = "pageSize", defaultValue = "16") int pageSize) {
 
@@ -187,8 +188,8 @@ public class ProductsController {
 	 * USER
 	 */
 	@PreAuthorize("hasRole('USER')")
-	@PostMapping("add-review")
-	@Operation(summary = "add review - Access by User", tags = { "Product" })
+	@PostMapping("/add-review")
+	@Operation(summary = "add review - Access by User", tags = { "Product","User" })
 	public ResponseEntity<?> addReview(@RequestBody ReviewDto reviewDto) {
 
 		boolean review = productService.addReview(reviewDto);
@@ -217,9 +218,9 @@ public class ProductsController {
 	 * Get all reviews added by logged-in user ----------------------------------
 	 * Accessible by USER and ADMIN
 	 */
-	@Operation(summary = "see all user review - Acess by User and Admin", tags = { "Product" })
+	@Operation(summary = "see all user review - Acess by User and Admin", tags = { "Product","User" })
 	@PreAuthorize("hasAnyRole('USER','ADMIN')")
-	@GetMapping("all-user-review")
+	@GetMapping("/all-user-review")
 	public ResponseEntity<?> allUserReview(@RequestParam(name = "pageNumber", defaultValue = "0") int pageNumber,
 			@RequestParam(name = "pageSize", defaultValue = "16") int pageSize) {
 
@@ -231,6 +232,15 @@ public class ProductsController {
 		} else {
 			return ResponseBuilder.withOutData("No Review Found", HttpStatus.OK);
 		}
+	}
+
+	// delete Review
+	@Operation(summary = "delete user review - Acess by User and Admin", tags = { "Product" })
+	@PreAuthorize("hasAnyRole('USER','ADMIN')")
+	@DeleteMapping("/delete/{reviewid}")
+	public ResponseEntity<?> deleteReview(@PathVariable int reviewid) {
+		productService.deleteReview(reviewid);
+		return ResponseEntity.noContent().build();
 	}
 
 	/**
@@ -265,6 +275,17 @@ public class ProductsController {
 
 		if (!ObjectUtils.isEmpty(product)) {
 			return ResponseBuilder.withData("Fetched Successfully", product, HttpStatus.OK);
+		} else {
+			return ResponseBuilder.withOutData("No Product Found", HttpStatus.OK);
+		}
+	}
+	@Operation(summary = "See all Order status details - Accesss by  Admin", tags = { "Admin" })
+	@PreAuthorize("hasRole('ADMIN')")
+	@GetMapping("/all-status-details")
+	public ResponseEntity<?> allStatusDetails() {
+		List<OrderStatusDto> allOrderSaus = productService.allOrderStatus();
+		if (!CollectionUtils.isEmpty(allOrderSaus)) {
+			return ResponseBuilder.withData("Fetched Successfully", allOrderSaus, HttpStatus.OK);
 		} else {
 			return ResponseBuilder.withOutData("No Product Found", HttpStatus.OK);
 		}
