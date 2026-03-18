@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
@@ -34,6 +35,7 @@ import com.org.Velvet.Virtue.service.UsersService;
 import com.org.Velvet.Virtue.validation.UserValidation;
 
 import jakarta.mail.MessagingException;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
 
 @Service
@@ -148,6 +150,51 @@ public class UsersServiceImpl implements UsersService {
 		return DelhiveryResponse.builder().productDelhiveryDto(list).totalPage(allByUsers.getTotalPages())
 				.pageNumber(allByUsers.getNumber()).pagesize(allByUsers.getSize()).isLastPage(allByUsers.isLast())
 				.isfirstPage(allByUsers.isFirst()).totalElement(allByUsers.getTotalElements()).build();
+	}
+
+	@Override
+	public void forgetPassword(String userName, HttpServletRequest req) throws MessagingException {
+		Users user = usersRepo.findByEmail(userName);
+		if (!ObjectUtils.isEmpty(user)) {
+			String random = UUID.randomUUID().toString();
+			user.getUserVerification().setVCode(random);
+			usersRepo.save(user);
+
+			String endPoint = "/api/v1/user/verify-password-link?userId=";
+			String message = "<b>Hii [[user]],</b><br>"
+					+ "We received a request to reset your password. Click the button below to reset it: <br>"
+					+ "<a href='[[url]]'>Click Here </a><br>"
+					+ "If you didn’t request a password reset, you can safely ignore this email. Your password will not change.<br>"
+					+ "If you have any questions, feel free to contact our support team.<br><br>" + "Thanks,<br>"
+					+ "VelvetVirtue.com";
+
+			message = message.replace("[[user]]", user.getFirstName());
+			message = message.replace("[[url]]", CommonUtil.getUrl(req) + endPoint + user.getId() + "&vCode="
+					+ user.getUserVerification().getVCode());
+			MailData mailData = MailData.builder().subject("Forget Password").message(message).title("Forget Password")
+					.to(user.getEmail()).build();
+			mailService.send(mailData);
+		}
+
+	}
+
+	@Override
+	public boolean passwordReset(int userId, String vCode) {
+		Users user = usersRepo.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User Not Found"));
+		if (user.getUserVerification().getVCode().equals(vCode)) {
+			user.getUserVerification().setVCode("NULL");
+			usersRepo.save(user);
+			return true;
+		}
+		return false;
+	}
+
+	@Override
+	public boolean resetPassword(String password) {
+		Users user = CommonUtil.getLoggedUser();
+		user.setPassword(encoder.encode(password));
+		usersRepo.save(user);
+		return true;
 	}
 
 }
