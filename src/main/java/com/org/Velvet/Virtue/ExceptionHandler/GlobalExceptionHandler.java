@@ -72,4 +72,8 @@ public class GlobalExceptionHandler {
 	public static ResponseEntity<?> classCatException(ClassCastException ex) {
 		return ResponseBuilder.withOutData(ex.getMessage(), HttpStatus.BAD_REQUEST);
 	}
+	@ExceptionHandler(Exception.class)
+	public static ResponseEntity<?> exception(Exception ex) {
+		return ResponseBuilder.withOutData(ex.getMessage(), HttpStatus.BAD_REQUEST);
+	}
 }

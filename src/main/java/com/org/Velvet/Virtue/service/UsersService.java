@@ -24,5 +24,5 @@ public interface UsersService {
 
 	boolean passwordReset(int userId, String vCode);
 
-	boolean resetPassword(String password);
+	boolean resetPassword(String password,String confirmPassword) throws Exception;
 }
