@@ -34,12 +34,14 @@ public class HomeController {
 		usersService.forgetPassword(email, req);
 		return ResponseBuilder.withOutData("Email Sent Successfully", HttpStatus.OK);
 	}
-	@Operation(summary="Reset Password - Access by Admin,User,Seller", tags = { "Home" })
+
+	@Operation(summary = "Reset Password - Access by Admin,User,Seller", tags = { "Home" })
 	@PreAuthorize("hasAnyRole('USER','ADMIN','SELLER')")
 	@PostMapping("/resetPassword")
-	public ResponseEntity<?> resetPassword(@RequestParam String password){
-		boolean resetPassword = usersService.resetPassword(password);
-		if(resetPassword) {
+	public ResponseEntity<?> resetPassword(@RequestParam String password, @RequestParam String confirmPassword)
+			throws Exception {
+		boolean resetPassword = usersService.resetPassword(password, confirmPassword);
+		if (resetPassword) {
 			return ResponseBuilder.withOutData("Password Reset Successfully", HttpStatus.OK);
 		}
 		return ResponseBuilder.withOutData("Something went wrong", HttpStatus.INTERNAL_SERVER_ERROR);

@@ -91,8 +91,8 @@ public class UserController {
 		userService.deleteUser(id);
 		return ResponseEntity.noContent().build();
 	}
-	@PreAuthorize("hasAnyRole('USER','ADMIN','SELLER')")
-	@PostMapping("/verify-password-link/{userId}")
+	//@PreAuthorize("hasAnyRole('USER','ADMIN','SELLER')")
+	@GetMapping("/verify-password-link/{userId}")
 	public ResponseEntity<?> verifyPassword(@PathVariable int userId,@RequestParam String vCode){
 		boolean passwordReset = userService.passwordReset(userId, vCode);
 		if(passwordReset) {

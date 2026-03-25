@@ -160,7 +160,7 @@ public class UsersServiceImpl implements UsersService {
 			user.getUserVerification().setVCode(random);
 			usersRepo.save(user);
 
-			String endPoint = "/api/v1/user/verify-password-link?userId=";
+			String endPoint = "/api/v1/user/verify-password-link/";
 			String message = "<b>Hii [[user]],</b><br>"
 					+ "We received a request to reset your password. Click the button below to reset it: <br>"
 					+ "<a href='[[url]]'>Click Here </a><br>"
@@ -169,7 +169,7 @@ public class UsersServiceImpl implements UsersService {
 					+ "VelvetVirtue.com";
 
 			message = message.replace("[[user]]", user.getFirstName());
-			message = message.replace("[[url]]", CommonUtil.getUrl(req) + endPoint + user.getId() + "&vCode="
+			message = message.replace("[[url]]", CommonUtil.getUrl(req) + endPoint + user.getId() + "?vCode="
 					+ user.getUserVerification().getVCode());
 			MailData mailData = MailData.builder().subject("Forget Password").message(message).title("Forget Password")
 					.to(user.getEmail()).build();
@@ -190,11 +190,19 @@ public class UsersServiceImpl implements UsersService {
 	}
 
 	@Override
-	public boolean resetPassword(String password) {
+	public boolean resetPassword(String password, String confirmPassword) throws Exception {
 		Users user = CommonUtil.getLoggedUser();
+		if (!user.getUserVerification().getVCode().equals("NULL") ) {
+			throw new Exception("Please verify");
+		}
+		
+		if (!password.equals(confirmPassword)) {
+			throw new Exception("Password did not match");
+		}
+		UsersDto ud = new UsersDto();
+		ud.setPassword(password);
 		user.setPassword(encoder.encode(password));
 		usersRepo.save(user);
 		return true;
 	}
-
 }
