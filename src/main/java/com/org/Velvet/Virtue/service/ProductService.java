@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.springframework.web.multipart.MultipartFile;
 
+import com.org.Velvet.Virtue.Dto.OrderStatusDto;
 import com.org.Velvet.Virtue.Dto.ProductResponse;
 import com.org.Velvet.Virtue.Dto.ProductsDto;
 import com.org.Velvet.Virtue.Dto.ReviewDto;
@@ -36,4 +37,5 @@ public interface ProductService {
 
 	ProductsDto findByProductId(int priductId);
 
+	List<OrderStatusDto> allOrderStatus();
 }

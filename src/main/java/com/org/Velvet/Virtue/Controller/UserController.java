@@ -72,7 +72,7 @@ public class UserController {
 		return ResponseBuilder.withOutData("No User Found", HttpStatus.OK);
 	}
 
-	@Operation(summary = "See all user - Acess by Admin", tags = { "User" })
+	@Operation(summary = "See all user - Acess by Admin", tags = { "Admin" })
 	@GetMapping("/allUser")
 	@PreAuthorize("hasRole('ADMIN')")
 	public ResponseEntity<?> alluser() {
